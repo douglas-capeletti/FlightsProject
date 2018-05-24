@@ -1,10 +1,10 @@
 
 package myFlight.gui;
 
-import java.awt.Color;
-
 import org.jxmapviewer.viewer.DefaultWaypoint;
 import org.jxmapviewer.viewer.GeoPosition;
+
+import java.awt.*;
 
 /**
  * Um waypoint que tem uma cor e um texto associados

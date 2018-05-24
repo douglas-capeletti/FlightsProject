@@ -1,10 +1,9 @@
 package myFlight.gui;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import org.jxmapviewer.viewer.GeoPosition;
-
 import myFlight.modelo.Geo;
+
+import java.awt.*;
+import java.util.ArrayList;
 
 public class Tracado {
 	
