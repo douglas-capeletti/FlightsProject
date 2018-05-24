@@ -3,6 +3,7 @@ package myFlight.gui;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import myFlight.modelo.*;
@@ -30,17 +31,9 @@ public class Controller {
     private ComboBox<CiaAerea> comboCia;
 
     @FXML BorderPane PainelPrincipal;
+    @FXML Button BTNFlipMap;
 
-    // Inicializando os dados aqui...
-    private void setup() {
-
-        gerCias = new GerenciadorCias();
-        gerAero = new GerenciadorAeroportos();
-        gerRotas = new GerenciadorRotas();
-        gerAvioes = new GerenciadorAeronaves();
-    }
-
-    @FXML private void Consulta1() {
+    @FXML private void exemplo() {
 
         // Lista para armazenar o resultado da consulta
         List<MyWaypoint> lstPoints = new ArrayList<>();
@@ -87,8 +80,9 @@ public class Controller {
         gerenciador.getMapKit().repaint();
     }
 
-    @FXML private void Consulta2(){
+    @FXML private void FlipMap(){
         gerenciador.flipTipoMapa();
+        BTNFlipMap.setText(gerenciador.getTipoMapa().toString());
     }
 
     private class EventosMouse extends MouseAdapter {
@@ -113,12 +107,16 @@ public class Controller {
     }
 
     @FXML void initialize(){
-        setup();
+        gerCias = new GerenciadorCias();
+        gerAero = new GerenciadorAeroportos();
+        gerRotas = new GerenciadorRotas();
+        gerAvioes = new GerenciadorAeronaves();
         GeoPosition inicial = new GeoPosition(-30.05, -51.18);
         gerenciador = new GerenciadorMapa(inicial, GerenciadorMapa.FonteImagens.VirtualEarth);
         mouse = new Controller.EventosMouse();
         gerenciador.getMapKit().getMainMap().addMouseListener(mouse);
         gerenciador.getMapKit().getMainMap().addMouseMotionListener(mouse);
+        BTNFlipMap.setText(gerenciador.getTipoMapa().toString());
 
         //inicializacao do mapa
         createSwingContent(mapkit);
