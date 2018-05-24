@@ -15,9 +15,7 @@ public class JanelaFX extends Application {
 	public void start(Stage primaryStage) throws Exception {
 
 		primaryStage.setTitle("My-Flight");
-        primaryStage.setResizable(false);
-		primaryStage.setFullScreen(true);
-		primaryStage.getIcons().add(new Image("file:images/logo.png"));
+		primaryStage.getIcons().add(new Image("file:src/main/resources/images/logo.png"));
 		Parent root = FXMLLoader.load(getClass().getResource("/Main.fxml"));
 		primaryStage.setScene(new Scene(root));
 		primaryStage.show();
