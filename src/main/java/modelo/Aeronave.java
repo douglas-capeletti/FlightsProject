@@ -1,4 +1,4 @@
-package myFlight.modelo;
+package modelo;
 
 public class Aeronave implements Imprimivel, Comparable<Aeronave> {
 	private String codigo;

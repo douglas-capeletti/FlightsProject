@@ -1,4 +1,4 @@
-package myFlight.modelo;
+package modelo;
 
 public interface Imprimivel {
     void imprimir();

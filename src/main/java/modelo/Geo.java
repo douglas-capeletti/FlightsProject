@@ -1,4 +1,4 @@
-package myFlight.modelo;
+package modelo;
 
 import org.jxmapviewer.viewer.GeoPosition;
 

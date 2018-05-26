@@ -1,10 +1,10 @@
-package myFlight.gui;
+package gui;
 
 import geografico.Geodesic;
 import geografico.GeodesicData;
 import geografico.GeodesicLine;
 import geografico.GeodesicMask;
-import myFlight.modelo.Geo;
+import modelo.Geo;
 import org.jxmapviewer.JXMapKit;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.OSMTileFactoryInfo;

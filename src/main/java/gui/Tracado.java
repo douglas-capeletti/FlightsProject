@@ -1,6 +1,6 @@
-package myFlight.gui;
+package gui;
 
-import myFlight.modelo.Geo;
+import modelo.Geo;
 
 import java.awt.*;
 import java.util.ArrayList;

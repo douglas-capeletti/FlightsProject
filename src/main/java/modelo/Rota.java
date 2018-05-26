@@ -1,4 +1,4 @@
-package myFlight.modelo;
+package modelo;
 
 public class Rota implements Comparable<Rota> {
 	private CiaAerea cia;

@@ -1,4 +1,4 @@
-package myFlight.gui;
+package gui;
 
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
-import myFlight.modelo.*;
+import modelo.*;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
