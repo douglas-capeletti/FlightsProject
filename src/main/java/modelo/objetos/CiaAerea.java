@@ -1,4 +1,4 @@
-package modelo;
+package modelo.objetos;
 
 public class CiaAerea {
 	private String codigo;
@@ -19,6 +19,6 @@ public class CiaAerea {
 
     @Override
     public String toString() {
-        return codigo + " (" + nome + ")";
+        return "(" + codigo + ") - " + nome + "\n";
     }
 }

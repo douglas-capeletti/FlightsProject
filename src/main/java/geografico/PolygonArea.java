@@ -37,7 +37,7 @@ package geografico;
  * // At the end of input, the program prints the number of vertices,
  * // the perimeter of the polygon and its area (for the WGS84 ellipsoid).
  *
- * import java.util.*;
+ * import java.Util.*;
  * import net.sf.geographiclib.*;
  *
  * public class Planimeter {

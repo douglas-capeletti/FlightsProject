@@ -181,7 +181,7 @@ package geografico;
  * // This program reads in lines with lat1, lon1, azi1, s12 and prints
  * // out lines with lat2, lon2, azi2 (for the WGS84 ellipsoid).
  *
- * import java.util.*;
+ * import java.Util.*;
  * import net.sf.geographiclib.*;
  * public class Direct {
  *   public static void main(String[] args) {

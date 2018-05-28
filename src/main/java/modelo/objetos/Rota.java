@@ -1,6 +1,6 @@
-package modelo;
+package modelo.objetos;
 
-public class Rota implements Comparable<Rota> {
+public class Rota {
 	private CiaAerea cia;
 	private Aeroporto origem;
 	private Aeroporto destino;
@@ -32,12 +32,6 @@ public class Rota implements Comparable<Rota> {
     @Override
     public String toString() {
         return cia.getCodigo() + " - " + origem.getCodigo() + " -> " + destino.getCodigo()
-                + " ("  + aeronave.getCodigo() + ")";
+                + " ("  + aeronave.getCodigo() + ")\n";
     }
-
-	@Override
-	public int compareTo(Rota rota) {
-		return this.cia.getNome().compareTo(
-				rota.cia.getNome());
-	}
 }

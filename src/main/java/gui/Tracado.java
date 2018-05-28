@@ -1,6 +1,6 @@
 package gui;
 
-import modelo.Geo;
+import modelo.objetos.Geo;
 
 import java.awt.*;
 import java.util.ArrayList;

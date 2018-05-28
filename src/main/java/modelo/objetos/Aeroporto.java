@@ -1,6 +1,6 @@
-package modelo;
+package modelo.objetos;
 
-public class Aeroporto implements Comparable<Aeroporto> {
+public class Aeroporto{
 	private String codigo;
 	private String nome;
 	private Geo loc;
@@ -25,11 +25,6 @@ public class Aeroporto implements Comparable<Aeroporto> {
 
     @Override
     public String toString() {
-        return codigo + " - " + nome + " [" + loc + "]";
+        return codigo + " - " + nome + " [" + loc + "]\n";
     }
-
-	@Override
-	public int compareTo(Aeroporto outro) {
-		return this.nome.compareTo(outro.nome);
-	}
 }

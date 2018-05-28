@@ -6,7 +6,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
-import modelo.*;
+import modelo.gerenciadores.GerenciadorAeronaves;
+import modelo.gerenciadores.GerenciadorAeroportos;
+import modelo.gerenciadores.GerenciadorCias;
+import modelo.gerenciadores.GerenciadorRotas;
+import modelo.objetos.Aeroporto;
+import modelo.objetos.CiaAerea;
+import modelo.objetos.Geo;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 

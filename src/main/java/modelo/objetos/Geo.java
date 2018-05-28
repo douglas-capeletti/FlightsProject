@@ -1,4 +1,4 @@
-package modelo;
+package modelo.objetos;
 
 import org.jxmapviewer.viewer.GeoPosition;
 
