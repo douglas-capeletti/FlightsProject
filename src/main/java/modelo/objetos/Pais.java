@@ -1,10 +1,10 @@
 package modelo.objetos;
 
-public class Paises {
+public class Pais {
     private String codigo;
     private String nome;
 
-    public Paises(String codigo, String nome) {
+    public Pais(String codigo, String nome) {
         this.codigo = codigo;
         this.nome = nome;
     }
