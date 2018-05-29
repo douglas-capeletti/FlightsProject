@@ -16,12 +16,12 @@ public class Setup {
 	private GerenciadorRotas rotas;
 	private GerenciadorPaises paises;
 
-	public Setup(GerenciadorAeronaves avioes, GerenciadorAeroportos aeroportos, GerenciadorCias empresas, GerenciadorRotas rotas, GerenciadorPaises paises) {
+	public Setup(GerenciadorAeronaves avioes, GerenciadorAeroportos aeroportos, GerenciadorCias empresas, GerenciadorPaises paises, GerenciadorRotas rotas) {
 		this.avioes = avioes;
 		this.aeroportos = aeroportos;
 		this.empresas = empresas;
-		this.rotas = rotas;
 		this.paises = paises;
+		this.rotas = rotas;
 		carregaAeronaves();
 		carregaAeroportos();
 		carregaCias();

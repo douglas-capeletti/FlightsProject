@@ -6,10 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
-import modelo.gerenciadores.GerenciadorAeronaves;
-import modelo.gerenciadores.GerenciadorAeroportos;
-import modelo.gerenciadores.GerenciadorCias;
-import modelo.gerenciadores.GerenciadorRotas;
+import modelo.Setup;
+import modelo.gerenciadores.*;
 import modelo.objetos.Aeroporto;
 import modelo.objetos.CiaAerea;
 import modelo.objetos.Geo;
@@ -27,11 +25,12 @@ public class Controller {
 
     final SwingNode mapkit = new SwingNode();
 
-    private GerenciadorCias gerCias;
-    private GerenciadorAeroportos gerAero;
-    private GerenciadorRotas gerRotas;
     private GerenciadorAeronaves gerAvioes;
-    private GerenciadorMapa gerenciador;
+    private GerenciadorAeroportos gerAero;
+    private GerenciadorCias gerCias;
+    private GerenciadorPaises gerPaises;
+    private GerenciadorRotas gerRotas;
+    private GerenciadorMapa mapaInicial;
     private Controller.EventosMouse mouse;
     private ObservableList<CiaAerea> comboCiasData;
     private ComboBox<CiaAerea> comboCia;
@@ -39,7 +38,7 @@ public class Controller {
     @FXML BorderPane PainelPrincipal;
     @FXML Button BTNFlipMap;
 
-    @FXML private void exemplo() {
+    @FXML private void Consulta() {
 
         // Lista para armazenar o resultado da consulta
         List<MyWaypoint> lstPoints = new ArrayList<>();
@@ -49,7 +48,7 @@ public class Controller {
         Aeroporto lis = new Aeroporto("LIS", "Lisbon", new Geo(38.772,-9.1342));
         Aeroporto mia = new Aeroporto("MIA", "Miami International", new Geo(25.7933, -80.2906));
 
-        gerenciador.clear();
+        mapaInicial.clear();
         Tracado tr = new Tracado();
         tr.setLabel("Teste");
         tr.setWidth(5);
@@ -57,14 +56,14 @@ public class Controller {
         tr.addPonto(poa.getLocal());
         tr.addPonto(mia.getLocal());
 
-        gerenciador.addTracado(tr);
+        mapaInicial.addTracado(tr);
 
         Tracado tr2 = new Tracado();
         tr2.setWidth(5);
         tr2.setCor(Color.BLUE);
         tr2.addPonto(gru.getLocal());
         tr2.addPonto(lis.getLocal());
-        gerenciador.addTracado(tr2);
+        mapaInicial.addTracado(tr2);
 
         // Adiciona os locais de cada aeroporto (sem repetir) na lista de
         // waypoints
@@ -75,54 +74,55 @@ public class Controller {
         lstPoints.add(new MyWaypoint(Color.RED, mia.getCodigo(), mia.getLocal(), 5));
 
         // Para obter um ponto clicado no mapa, usar como segue:
-        // GeoPosition pos = gerenciador.getPosicao();
+        // GeoPosition pos = mapaInicial.getPosicao();
 
-        // Informa o resultado para o gerenciador
-        gerenciador.setPontos(lstPoints);
+        // Informa o resultado para o mapaInicial
+        mapaInicial.setPontos(lstPoints);
 
         // Quando for o caso de limpar os traçados...
-        // gerenciador.clear();
+        // mapaInicial.clear();
 
-        gerenciador.getMapKit().repaint();
-    }
-
-    @FXML private void FlipMap(){
-        gerenciador.flipTipoMapa();
-        BTNFlipMap.setText(gerenciador.getTipoMapa().toString());
+        mapaInicial.getMapKit().repaint();
     }
 
     private class EventosMouse extends MouseAdapter {
-        private int lastButton = -1;
 
+        private int lastButton = -1;
         @Override
         public void mousePressed(MouseEvent e) {
-            JXMapViewer mapa = gerenciador.getMapKit().getMainMap();
+            JXMapViewer mapa = mapaInicial.getMapKit().getMainMap();
             GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
             // System.out.println(loc.getLatitude()+", "+loc.getLongitude());
             lastButton = e.getButton();
             // Botão 3: seleciona localização
             if (lastButton == MouseEvent.BUTTON3) {
-                gerenciador.setPosicao(loc);
-                gerenciador.getMapKit().repaint();
+                mapaInicial.setPosicao(loc);
+                mapaInicial.getMapKit().repaint();
             }
         }
+
+    }
+    private void createSwingContent(final SwingNode swingNode) {
+        SwingUtilities.invokeLater(() -> swingNode.setContent(mapaInicial.getMapKit()));
     }
 
-    private void createSwingContent(final SwingNode swingNode) {
-        SwingUtilities.invokeLater(() -> swingNode.setContent(gerenciador.getMapKit()));
+    @FXML private void FlipMap(){
+        mapaInicial.flipTipoMapa();
+        BTNFlipMap.setText(mapaInicial.getTipoMapa().toString());
+    }
+
+    void inicializacaoGerenciadores(){
+        new Setup(gerAvioes, gerAero, gerCias, gerPaises, gerRotas);
+
     }
 
     @FXML void initialize(){
-        gerCias = new GerenciadorCias();
-        gerAero = new GerenciadorAeroportos();
-        gerRotas = new GerenciadorRotas();
-        gerAvioes = new GerenciadorAeronaves();
-        GeoPosition inicial = new GeoPosition(-30.05, -51.18);
-        gerenciador = new GerenciadorMapa(inicial, GerenciadorMapa.FonteImagens.VirtualEarth);
+        inicializacaoGerenciadores();
         mouse = new Controller.EventosMouse();
-        gerenciador.getMapKit().getMainMap().addMouseListener(mouse);
-        gerenciador.getMapKit().getMainMap().addMouseMotionListener(mouse);
-        BTNFlipMap.setText(gerenciador.getTipoMapa().toString());
+        mapaInicial.getMapKit().getMainMap().addMouseListener(mouse);
+        mapaInicial.getMapKit().getMainMap().addMouseMotionListener(mouse);
+        BTNFlipMap.setText(mapaInicial.getTipoMapa().toString());
+        mapaInicial = new GerenciadorMapa(new GeoPosition(-30.05, -51.18), GerenciadorMapa.FonteImagens.VirtualEarth);
 
         //inicializacao do mapa
         createSwingContent(mapkit);

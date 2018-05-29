@@ -1,41 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.text.Font?>
-
-<BorderPane fx:id="PainelPrincipal" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
-   <left>
-      <GridPane fx:id="PainelLateral" prefHeight="400.0" prefWidth="103.0" BorderPane.alignment="TOP_RIGHT">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-        </rowConstraints>
-         <children>
-            <Button mnemonicParsing="false" onAction="#exemplo" text="Consulta1" />
-            <Button mnemonicParsing="false" text="Consulta2" GridPane.rowIndex="1" />
-            <Button mnemonicParsing="false" text="Consulta3" GridPane.rowIndex="2" />
-            <Button mnemonicParsing="false" text="Consulta4" GridPane.rowIndex="3" />
-         </children>
-      </GridPane>
-   </left>
-   <top>
-      <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="14.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
-        <items>
-          <Button fx:id="BTNFlipMap" mnemonicParsing="false" onAction="#FlipMap" prefHeight="23.0" prefWidth="136.0">
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<VBox prefHeight="478.0" prefWidth="764.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="gui.Controller">
+  <children>
+      <ToolBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="37.0" prefWidth="900.0" VBox.vgrow="NEVER">
+         <items>
+            <Button fx:id="BTNFlipMap" alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#FlipMap">
                <font>
                   <Font name="System Bold Italic" size="10.0" />
                </font></Button>
-        </items>
+            <Label text="Modo de Exibição: " />
+            <Label prefHeight="17.0" prefWidth="0.0">
+               <padding>
+                  <Insets right="70.0" />
+               </padding>
+            </Label>
+            <Label nodeOrientation="LEFT_TO_RIGHT" text="My Flight - Consulta de voos">
+               <font>
+                  <Font name="System Bold Italic" size="16.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor>
+            </Label>
+         </items>
       </ToolBar>
-   </top>
-</BorderPane>
+    <SplitPane dividerPositions="0.2" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane SplitPane.resizableWithParent="false">
+               <children>
+                  <ComboBox fx:id="CBPartida" layoutY="63.0" prefWidth="150.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                  <Label layoutY="4.0" text="Pesquisa por viagem" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutY="46.0" text="Partida:" AnchorPane.leftAnchor="5.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutY="108.0" text="Chegada:" AnchorPane.leftAnchor="5.0">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ComboBox fx:id="CBChegada" layoutY="128.0" prefWidth="150.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                  <Button layoutX="58.0" layoutY="400.0" mnemonicParsing="false" onAction="#Consulta" text="CONSULTAR" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="5.0" />
+               </children>
+        </AnchorPane>
+            <BorderPane fx:id="PainelPrincipal" />
+      </items>
+    </SplitPane>
+  </children>
+</VBox>
