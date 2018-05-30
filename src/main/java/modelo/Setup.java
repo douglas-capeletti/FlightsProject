@@ -67,9 +67,9 @@ public class Setup {
 
 	public enum Arquivos {
 		CIA_AEREA("airlines.dat"),
-		AEROPORTOS("airport.dat"),
+		AEROPORTOS("airports.dat"),
 		PAISES("countries.dat"),
-		AERONAVES("equipments.dat"),
+		AERONAVES("equipment.dat"),
 		ROTAS("routes.dat");
 
 		private String caminho;

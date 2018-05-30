@@ -33,7 +33,7 @@
       <items>
         <AnchorPane SplitPane.resizableWithParent="false">
                <children>
-                  <ComboBox fx:id="CBPartida" layoutY="63.0" prefWidth="150.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                  <ComboBox fx:id="CBPartida" layoutY="63.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
                   <Label layoutY="4.0" text="Pesquisa por viagem" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
                      <font>
                         <Font name="System Bold" size="14.0" />
@@ -44,12 +44,12 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutY="108.0" text="Chegada:" AnchorPane.leftAnchor="5.0">
+                  <Label layoutY="108.0" text="Destino:" AnchorPane.leftAnchor="5.0">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="CBChegada" layoutY="128.0" prefWidth="150.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                  <ComboBox fx:id="CBDestino" layoutY="128.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
                   <Button layoutX="58.0" layoutY="400.0" mnemonicParsing="false" onAction="#Consulta" text="CONSULTAR" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="5.0" />
                </children>
         </AnchorPane>
