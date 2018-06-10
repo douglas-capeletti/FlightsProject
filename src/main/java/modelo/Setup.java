@@ -3,6 +3,7 @@ package modelo;
 import modelo.gerenciadores.*;
 import modelo.objetos.*;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -31,38 +32,39 @@ public class Setup {
 
 	private List<String[]> carregaDados(Arquivos origem) throws NullPointerException{
 		List<String[]> linhas = null;
-		try (Stream<String> stream = Files.lines(Paths.get(origem.getCaminho()))){
-			 linhas = stream.map((linha)-> linha.split(";")).collect(Collectors.toList());
-			linhas.remove(0);//tira a primeira linha com o cabecalho
-		} catch (Exception e){
+		try {
+			try (Stream<String> stream = Files.lines(Paths.get(origem.getCaminho()))) {
+				try {
+					linhas = stream.map((linha) -> linha.split(";")).collect(Collectors.toList());
+					linhas.remove(0);//tira a primeira linha com o cabecalho
+				} finally {
+					stream.close();
+				}
+			}
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return linhas;
 	}
 
 	private void carregaAeronaves(){
-		for (String[] linha :  carregaDados(Arquivos.AERONAVES))
-			avioes.adicionar(new Aeronave(linha[0], linha[1], Integer.parseInt(linha[2])));
+		carregaDados(Arquivos.AERONAVES).forEach(linha -> avioes.adicionar(new Aeronave(linha[0], linha[1], Integer.parseInt(linha[2]))));
 	}
 
 	private void carregaAeroportos(){
-		for (String[] linha :  carregaDados(Arquivos.AEROPORTOS))
-			aeroportos.adicionar(new Aeroporto(linha[0], linha[3], new Geo(Double.parseDouble(linha[1]), Double.parseDouble(linha[2]))));
+		carregaDados(Arquivos.AEROPORTOS).forEach(linha -> aeroportos.adicionar(new Aeroporto(linha[0], linha[3], new Geo(Double.parseDouble(linha[1]), Double.parseDouble(linha[2])))));
 	}
 
 	private void carregaCias(){
-		for (String[] linha :  carregaDados(Arquivos.CIA_AEREA))
-			empresas.adicionar(new CiaAerea(linha[0], linha[1]));
+		carregaDados(Arquivos.CIA_AEREA).forEach(linha -> empresas.adicionar(new CiaAerea(linha[0], linha[1])));
 	}
 
 	private void carregaPaises(){
-		for (String[] linha :  carregaDados(Arquivos.PAISES))
-			paises.adicionar(new Pais(linha[0], linha[1]));
+		carregaDados(Arquivos.PAISES).forEach(linha -> paises.adicionar(new Pais(linha[0], linha[1])));
 	}
 
 	private void carregaRotas(){
-		for (String[] linha :  carregaDados(Arquivos.ROTAS))
-			rotas.adicionar(new Rota(empresas.buscarPorCod(linha[0]), aeroportos.buscarPorCodigo(linha[1]), aeroportos.buscarPorCodigo(linha[2]), avioes.buscarPorCodigo(linha[5])));
+		carregaDados(Arquivos.ROTAS).forEach(linha -> rotas.adicionar(new Rota(empresas.buscarPorCod(linha[0]), aeroportos.buscarPorCodigo(linha[1]), aeroportos.buscarPorCodigo(linha[2]), avioes.buscarPorCodigo(linha[5]))));
 	}
 
 	public enum Arquivos {
