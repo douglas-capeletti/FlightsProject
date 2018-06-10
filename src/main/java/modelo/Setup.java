@@ -77,7 +77,7 @@ public class Setup {
 		private String caminho;
 
 		public String getCaminho(){
-			return System.getProperty("user.dir") + "/src/main/resources/dados/" + caminho;
+			return System.getProperty("user.dir") + "/dados/" + caminho;
 		}
 
 		Arquivos(String caminho) {
