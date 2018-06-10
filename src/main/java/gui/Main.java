@@ -15,7 +15,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 
 		primaryStage.setTitle("My-Flight");
-		primaryStage.getIcons().add(new Image("file:src/main/resources/imagens/logo.png"));
+		primaryStage.getIcons().add(new Image("file:src/main/resources/imagens/Logo.png"));
 		Parent root = FXMLLoader.load(getClass().getResource("/Main.fxml"));
 		primaryStage.setScene(new Scene(root));
 		primaryStage.show();
