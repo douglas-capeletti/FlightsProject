@@ -1,6 +1,5 @@
 package gui;
 
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,8 +8,6 @@ import javafx.scene.layout.BorderPane;
 import modelo.Setup;
 import modelo.gerenciadores.*;
 import modelo.objetos.Aeroporto;
-import modelo.objetos.CiaAerea;
-import modelo.objetos.Geo;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -24,31 +21,31 @@ import java.util.List;
 public class Controller {
 
     final SwingNode mapkit = new SwingNode();
-
-    private GerenciadorAeronaves gerAvioes;
-    private GerenciadorAeroportos gerAero;
-    private GerenciadorCias gerCias;
-    private GerenciadorPaises gerPaises;
-    private GerenciadorRotas gerRotas;
-    private GerenciadorMapa mapaInicial;
+    private GerenciadorMapa gerMapa;
     private Controller.EventosMouse mouse;
-    private ObservableList<CiaAerea> comboCiasData;
-    private ComboBox<CiaAerea> comboCia;
+
+    private GerenciadorAeronaves gerAvioes = new GerenciadorAeronaves();
+    private GerenciadorAeroportos gerAero = new GerenciadorAeroportos();
+    private GerenciadorCias gerCias = new GerenciadorCias();
+    private GerenciadorPaises gerPaises = new GerenciadorPaises();
+    private GerenciadorRotas gerRotas = new GerenciadorRotas();
 
     @FXML BorderPane PainelPrincipal;
     @FXML Button BTNFlipMap;
+    @FXML ComboBox CBPartida;
+    @FXML ComboBox CBDestino;
 
     @FXML private void Consulta() {
 
         // Lista para armazenar o resultado da consulta
         List<MyWaypoint> lstPoints = new ArrayList<>();
 
-        Aeroporto poa = new Aeroporto("POA", "Salgado Filho", new Geo(-29.9939, -51.1711));
-        Aeroporto gru = new Aeroporto("GRU", "Guarulhos", new Geo(-23.4356, -46.4731));
-        Aeroporto lis = new Aeroporto("LIS", "Lisbon", new Geo(38.772,-9.1342));
-        Aeroporto mia = new Aeroporto("MIA", "Miami International", new Geo(25.7933, -80.2906));
+        Aeroporto poa = gerAero.buscarPorCodigo("POA");
+        Aeroporto gru = gerAero.buscarPorCodigo("GRU");
+        Aeroporto lis = gerAero.buscarPorCodigo("LIS");
+        Aeroporto mia = gerAero.buscarPorCodigo("MIA");
 
-        mapaInicial.clear();
+        gerMapa.clear();
         Tracado tr = new Tracado();
         tr.setLabel("Teste");
         tr.setWidth(5);
@@ -56,14 +53,14 @@ public class Controller {
         tr.addPonto(poa.getLocal());
         tr.addPonto(mia.getLocal());
 
-        mapaInicial.addTracado(tr);
+        gerMapa.addTracado(tr);
 
         Tracado tr2 = new Tracado();
         tr2.setWidth(5);
         tr2.setCor(Color.BLUE);
         tr2.addPonto(gru.getLocal());
         tr2.addPonto(lis.getLocal());
-        mapaInicial.addTracado(tr2);
+        gerMapa.addTracado(tr2);
 
         // Adiciona os locais de cada aeroporto (sem repetir) na lista de
         // waypoints
@@ -74,15 +71,15 @@ public class Controller {
         lstPoints.add(new MyWaypoint(Color.RED, mia.getCodigo(), mia.getLocal(), 5));
 
         // Para obter um ponto clicado no mapa, usar como segue:
-        // GeoPosition pos = mapaInicial.getPosicao();
+        // GeoPosition pos = gerMapa.getPosicao();
 
-        // Informa o resultado para o mapaInicial
-        mapaInicial.setPontos(lstPoints);
+        // Informa o resultado para o gerMapa
+        gerMapa.setPontos(lstPoints);
 
         // Quando for o caso de limpar os traçados...
-        // mapaInicial.clear();
+        // gerMapa.clear();
 
-        mapaInicial.getMapKit().repaint();
+        gerMapa.getMapKit().repaint();
     }
 
     private class EventosMouse extends MouseAdapter {
@@ -90,43 +87,52 @@ public class Controller {
         private int lastButton = -1;
         @Override
         public void mousePressed(MouseEvent e) {
-            JXMapViewer mapa = mapaInicial.getMapKit().getMainMap();
+            JXMapViewer mapa = gerMapa.getMapKit().getMainMap();
             GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
-            // System.out.println(loc.getLatitude()+", "+loc.getLongitude());
             lastButton = e.getButton();
             // Botão 3: seleciona localização
             if (lastButton == MouseEvent.BUTTON3) {
-                mapaInicial.setPosicao(loc);
-                mapaInicial.getMapKit().repaint();
+                gerMapa.setPosicao(loc);
+                gerMapa.getMapKit().repaint();
             }
         }
 
     }
     private void createSwingContent(final SwingNode swingNode) {
-        SwingUtilities.invokeLater(() -> swingNode.setContent(mapaInicial.getMapKit()));
+        SwingUtilities.invokeLater(() -> swingNode.setContent(gerMapa.getMapKit()));
     }
 
     @FXML private void FlipMap(){
-        mapaInicial.flipTipoMapa();
-        BTNFlipMap.setText(mapaInicial.getTipoMapa().toString());
+        gerMapa.flipTipoMapa();
+        BTNFlipMap.setText(gerMapa.getTipoMapa().toString());
     }
 
     void inicializacaoGerenciadores(){
+        mouse = new Controller.EventosMouse();
         new Setup(gerAvioes, gerAero, gerCias, gerPaises, gerRotas);
+        //Posicão inicial do Mapa, listeners do mouse e texto de FlipMap
+        gerMapa = new GerenciadorMapa(gerAero.buscarPorCodigo("POA").getLocal(), GerenciadorMapa.FonteImagens.VirtualEarth);
+        gerMapa.getMapKit().getMainMap().addMouseListener(mouse);
+        gerMapa.getMapKit().getMainMap().addMouseMotionListener(mouse);
+        BTNFlipMap.setText(gerMapa.getTipoMapa().toString());
+    }
+
+    void inicializacaoOpcoes(){
+//        CBPartida.setItems(FXCollections.observableArrayList(gerRotas.listarTodosCodigos()));
+//        if(CBPartida.getValue() != null){
+//            CBDestino.setItems(FXCollections.observableArrayList(gerRotas.listaDestinos((String)CBPartida.getValue())));
+//        }else{
+//            CBDestino.setItems(null);
+//        }
+
 
     }
 
     @FXML void initialize(){
         inicializacaoGerenciadores();
-        mouse = new Controller.EventosMouse();
-        mapaInicial.getMapKit().getMainMap().addMouseListener(mouse);
-        mapaInicial.getMapKit().getMainMap().addMouseMotionListener(mouse);
-        BTNFlipMap.setText(mapaInicial.getTipoMapa().toString());
-        mapaInicial = new GerenciadorMapa(new GeoPosition(-30.05, -51.18), GerenciadorMapa.FonteImagens.VirtualEarth);
-
-        //inicializacao do mapa
+        inicializacaoOpcoes();
         createSwingContent(mapkit);
-        PainelPrincipal.setCenter(mapkit);
+        PainelPrincipal.setCenter(mapkit); //inicializacao do mapa
     }
 
 }

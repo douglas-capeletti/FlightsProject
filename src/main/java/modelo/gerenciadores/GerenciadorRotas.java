@@ -18,8 +18,26 @@ public class GerenciadorRotas {
         rotas.put(rota.getOrigem().getCodigo(), rota);
     }
 
-    public ArrayList<Rota> listarTodas() {
+    public ArrayList<Rota> listarTodos() {
         return new ArrayList<>(rotas.values());
+    }
+
+    public ArrayList<String> listarTodosCodigos(){
+        ArrayList<String> codigos = new ArrayList<>();
+        for(Rota r: rotas.values()){
+            codigos.add(r.getAeronave().getCodigo());
+        }
+        return codigos;
+    }
+
+    public ArrayList<Rota> listaDestinos(String codOrigem){
+        ArrayList<Rota> destinos = new ArrayList<>();
+        for(Rota r: rotas.values()) {
+            if(r.getAeronave().getCodigo().equals(codOrigem)){
+                destinos.add(r);
+            }
+        }
+        return destinos;
     }
 
     public ArrayList<Rota> buscarOrigem(String codigo) {
