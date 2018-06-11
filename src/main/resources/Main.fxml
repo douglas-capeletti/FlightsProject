@@ -29,30 +29,81 @@
             </Label>
          </items>
       </ToolBar>
-    <SplitPane dividerPositions="0.2" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.27" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane SplitPane.resizableWithParent="false">
-               <children>
-                  <ComboBox fx:id="CBPartida" layoutY="63.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
-                  <Label layoutY="4.0" text="Pesquisa por viagem" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutY="46.0" text="Partida:" AnchorPane.leftAnchor="5.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <Label layoutY="108.0" text="Destino:" AnchorPane.leftAnchor="5.0">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <ComboBox fx:id="CBDestino" layoutY="128.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" />
-                  <Button layoutX="58.0" layoutY="400.0" mnemonicParsing="false" onAction="#Consulta" text="CONSULTAR" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="5.0" />
-               </children>
-        </AnchorPane>
+            <Accordion prefHeight="439.0" prefWidth="214.0">
+              <panes>
+                <TitledPane animated="false" text="Pesquisar Cia Aerea">
+                     <content>
+                    <AnchorPane>
+                           <children>
+                              <Label layoutY="46.0" text="Cia Aerea" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="CBCiaAerea" layoutY="63.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0" />
+                              <Label layoutY="108.0" text="Rota" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="75.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="CBRotaCiaAerea" layoutY="128.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="100.0" />
+                              <Button layoutX="58.0" layoutY="400.0" mnemonicParsing="false" onAction="#PesquisaCiaAerea" text="CONSULTAR" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                           </children>
+                    </AnchorPane>
+                     </content>
+                </TitledPane>
+                <TitledPane animated="false" text="Pesquisar Aeroporto">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <Label layoutY="46.0" text="Pais " AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="CBPais" layoutY="63.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0" />
+                              <Button layoutX="58.0" layoutY="400.0" mnemonicParsing="false" onAction="#PesquisaAeroporto" text="CONSULTAR" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                </TitledPane>
+                <TitledPane animated="false" text="Pesquisar Rota">
+                     <content>
+                        <AnchorPane>
+                           <children>
+                              <Label layoutY="46.0" text="Origem" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="CBOrigem" layoutY="63.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0" />
+                              <Label layoutY="108.0" text="Destino" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="75.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="CBDestino" layoutY="128.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="100.0" />
+                              <Label layoutX="15.0" layoutY="182.0" text="Conexões Máximas" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="145.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="CBConexoes" layoutX="15.0" layoutY="202.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="170.0" />
+                              <Label layoutX="25.0" layoutY="192.0" text="Tempo de Voo Máximo" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="215.0">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <ComboBox fx:id="CBTempoVoo" layoutX="25.0" layoutY="212.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="240.0" />
+                              <Button layoutX="58.0" layoutY="400.0" mnemonicParsing="false" onAction="#PesquisaRota" text="CONSULTAR" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                </TitledPane>
+              </panes>
+            </Accordion>
             <BorderPane fx:id="PainelPrincipal" />
       </items>
     </SplitPane>

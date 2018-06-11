@@ -20,7 +20,7 @@ import java.util.List;
 
 public class Controller {
 
-    final SwingNode mapkit = new SwingNode();
+    private final SwingNode mapkit = new SwingNode();
     private GerenciadorMapa gerMapa;
     private Controller.EventosMouse mouse;
 
@@ -32,10 +32,41 @@ public class Controller {
 
     @FXML BorderPane PainelPrincipal;
     @FXML Button BTNFlipMap;
-    @FXML ComboBox CBPartida;
-    @FXML ComboBox CBDestino;
 
-    @FXML private void Consulta() {
+    // Pesquisa Cia Aerea
+    @FXML ComboBox CBCiaAerea;
+    @FXML ComboBox CBRotaCiaAerea;
+
+    // Pesquisa Aeroporto;
+    @FXML ComboBox CBPais;
+
+    // Pesquisa Rota
+    @FXML ComboBox CBOrigem;
+    @FXML ComboBox CBDestino;
+    @FXML ComboBox CBConexoes;
+    @FXML ComboBox CBTempoVoo;
+
+    // Altera o modo de exibicao do Mapa
+    @FXML private void FlipMap(){
+        gerMapa.flipTipoMapa();
+        BTNFlipMap.setText(gerMapa.getTipoMapa().toString());
+    }
+
+    @FXML private void PesquisaCiaAerea(){
+        Consulta();
+    }
+
+    @FXML private void PesquisaAeroporto(){
+        System.out.println("Limpar");
+        gerMapa.clear();
+        gerMapa.getMapKit().repaint();
+    }
+
+    @FXML private void PesquisaRota(){
+
+    }
+
+    private void Consulta() {
 
         // Lista para armazenar o resultado da consulta
         List<MyWaypoint> lstPoints = new ArrayList<>();
@@ -52,15 +83,10 @@ public class Controller {
         tr.setCor(new Color(0,0,0,60));
         tr.addPonto(poa.getLocal());
         tr.addPonto(mia.getLocal());
+        tr.addPonto(gru.getLocal());
+        tr.addPonto(lis.getLocal());
 
         gerMapa.addTracado(tr);
-
-        Tracado tr2 = new Tracado();
-        tr2.setWidth(5);
-        tr2.setCor(Color.BLUE);
-        tr2.addPonto(gru.getLocal());
-        tr2.addPonto(lis.getLocal());
-        gerMapa.addTracado(tr2);
 
         // Adiciona os locais de cada aeroporto (sem repetir) na lista de
         // waypoints
@@ -85,6 +111,7 @@ public class Controller {
     private class EventosMouse extends MouseAdapter {
 
         private int lastButton = -1;
+
         @Override
         public void mousePressed(MouseEvent e) {
             JXMapViewer mapa = gerMapa.getMapKit().getMainMap();
@@ -98,13 +125,9 @@ public class Controller {
         }
 
     }
+
     private void createSwingContent(final SwingNode swingNode) {
         SwingUtilities.invokeLater(() -> swingNode.setContent(gerMapa.getMapKit()));
-    }
-
-    @FXML private void FlipMap(){
-        gerMapa.flipTipoMapa();
-        BTNFlipMap.setText(gerMapa.getTipoMapa().toString());
     }
 
     void inicializacaoGerenciadores(){
@@ -117,20 +140,8 @@ public class Controller {
         BTNFlipMap.setText(gerMapa.getTipoMapa().toString());
     }
 
-    void inicializacaoOpcoes(){
-//        CBPartida.setItems(FXCollections.observableArrayList(gerRotas.listarTodosCodigos()));
-//        if(CBPartida.getValue() != null){
-//            CBDestino.setItems(FXCollections.observableArrayList(gerRotas.listaDestinos((String)CBPartida.getValue())));
-//        }else{
-//            CBDestino.setItems(null);
-//        }
-
-
-    }
-
     @FXML void initialize(){
         inicializacaoGerenciadores();
-        inicializacaoOpcoes();
         createSwingContent(mapkit);
         PainelPrincipal.setCenter(mapkit); //inicializacao do mapa
     }
