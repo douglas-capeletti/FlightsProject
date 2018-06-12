@@ -2,8 +2,10 @@ package gui;
 
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import modelo.Setup;
 import modelo.gerenciadores.*;
@@ -23,6 +25,7 @@ public class Controller {
     private final SwingNode mapkit = new SwingNode();
     private GerenciadorMapa gerMapa;
     private Controller.EventosMouse mouse;
+    private ContextMenu contextMenu = new ContextMenu();
 
     private GerenciadorAeronaves gerAvioes = new GerenciadorAeronaves();
     private GerenciadorAeroportos gerAero = new GerenciadorAeroportos();
@@ -64,6 +67,15 @@ public class Controller {
 
     @FXML private void PesquisaRota(){
 
+    }
+
+    private void menuBotaoDireito(){
+        Menu pesquisarAeroporto = new Menu("Pesquisar Aeroporto...");
+        MenuItem distancia1 = new MenuItem("5KM de distância");
+        MenuItem distancia2 = new MenuItem("12KM de distância");
+        MenuItem distanciaX = new MenuItem("Qualquer distância");
+        pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distanciaX);
+        contextMenu.getItems().add(pesquisarAeroporto);
     }
 
     private void Consulta() {
@@ -117,8 +129,9 @@ public class Controller {
             JXMapViewer mapa = gerMapa.getMapKit().getMainMap();
             GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
             lastButton = e.getButton();
-            // Botão 3: seleciona localização
+            // Botão direito: seleciona localização
             if (lastButton == MouseEvent.BUTTON3) {
+                mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
                 gerMapa.setPosicao(loc);
                 gerMapa.getMapKit().repaint();
             }
@@ -141,6 +154,7 @@ public class Controller {
     }
 
     @FXML void initialize(){
+        menuBotaoDireito();
         inicializacaoGerenciadores();
         createSwingContent(mapkit);
         PainelPrincipal.setCenter(mapkit); //inicializacao do mapa
