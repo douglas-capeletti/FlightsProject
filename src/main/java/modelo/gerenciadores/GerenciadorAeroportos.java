@@ -25,5 +25,4 @@ public class GerenciadorAeroportos {
     public Aeroporto buscarPorCodigo(String codigo) {
         return aeroportos.get(codigo);
     }
-
 }

@@ -1,5 +1,6 @@
 package modelo.gerenciadores;
 
+import modelo.objetos.Aeroporto;
 import modelo.objetos.Rota;
 
 import java.util.ArrayList;
@@ -44,5 +45,14 @@ public class GerenciadorRotas {
         ArrayList<Rota> result = new ArrayList<>();
         for(Rota r: rotas.values()) if(r.getOrigem().getCodigo().equals(codigo)) result.add(r);
         return result;
+    }
+
+    public int buscaTrafego(String codAeroporto){
+        int trafegoTotal = 0;
+        for(Rota r: rotas.values()){
+            if(r.getOrigem().getCodigo().equals(codAeroporto)) trafegoTotal++;
+            if(r.getDestino().getCodigo().equals(codAeroporto)) trafegoTotal++;
+        }
+        return trafegoTotal;
     }
 }

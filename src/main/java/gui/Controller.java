@@ -69,13 +69,22 @@ public class Controller {
 
     }
 
-    private void menuBotaoDireito(){
-        Menu pesquisarAeroporto = new Menu("Pesquisar Aeroporto...");
+    private void contextMenu(){
+        MenuItem todosAero = new MenuItem("Buscar Todos Aeroportos");
+        todosAero.setOnAction(event -> buscaTodosAeroportos());
+
+        Menu pesquisarAeroporto = new Menu("Buscar Aeroporto...");
         MenuItem distancia1 = new MenuItem("5KM de distância");
+        distancia1.setOnAction(event -> buscarPorDistancia(5));
+
         MenuItem distancia2 = new MenuItem("12KM de distância");
+        distancia2.setOnAction(event -> buscarPorDistancia(12));
+
         MenuItem distanciaX = new MenuItem("Qualquer distância");
+        distanciaX.setOnAction(event -> buscarPorDistancia(-1));
+
         pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distanciaX);
-        contextMenu.getItems().add(pesquisarAeroporto);
+        contextMenu.getItems().addAll(todosAero, pesquisarAeroporto);
     }
 
     private void Consulta() {
@@ -120,8 +129,35 @@ public class Controller {
         gerMapa.getMapKit().repaint();
     }
 
-    private class EventosMouse extends MouseAdapter {
+    private MyWaypoint listarPontosDinamicos(Aeroporto aero){
+        return new MyWaypoint(Color.RED, aero.getCodigo(), aero.getLocal(), 7);
+    }
 
+    private void buscaTodosAeroportos(){
+        List<MyWaypoint> pontos = new ArrayList<>();
+        for(Aeroporto aero: gerAero.listarTodos()){
+            int trafego = gerRotas.buscaTrafego(aero.getCodigo());
+            pontos.add(new MyWaypoint(Color.RED, aero.getCodigo(), aero.getLocal(), trafego));
+        }
+        gerMapa.setPontos(pontos);
+        gerMapa.getMapKit().repaint();
+    }
+
+    private void buscarPorDistancia(int distancia){
+        for(Aeroporto aero: gerAero.listarTodos()){
+
+            // TODO
+
+        }
+
+
+        List<MyWaypoint> pontos = new ArrayList<>();
+        pontos.add(new MyWaypoint(Color.RED, " ", gerMapa.getPosicao(), 7));
+        gerMapa.setPontos(pontos);
+        gerMapa.getMapKit().repaint();
+    }
+
+    private class EventosMouse extends MouseAdapter {
         private int lastButton = -1;
 
         @Override
@@ -131,12 +167,11 @@ public class Controller {
             lastButton = e.getButton();
             // Botão direito: seleciona localização
             if (lastButton == MouseEvent.BUTTON3) {
-                mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
                 gerMapa.setPosicao(loc);
                 gerMapa.getMapKit().repaint();
+                mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
             }
         }
-
     }
 
     private void createSwingContent(final SwingNode swingNode) {
@@ -154,7 +189,7 @@ public class Controller {
     }
 
     @FXML void initialize(){
-        menuBotaoDireito();
+        contextMenu();
         inicializacaoGerenciadores();
         createSwingContent(mapkit);
         PainelPrincipal.setCenter(mapkit); //inicializacao do mapa
