@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 import modelo.Setup;
 import modelo.gerenciadores.*;
 import modelo.objetos.Aeroporto;
+import modelo.objetos.Geo;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -26,6 +27,7 @@ public class Controller {
     private GerenciadorMapa gerMapa;
     private Controller.EventosMouse mouse;
     private ContextMenu contextMenu = new ContextMenu();
+    private Util util = new Util();
 
     private GerenciadorAeronaves gerAvioes = new GerenciadorAeronaves();
     private GerenciadorAeroportos gerAero = new GerenciadorAeroportos();
@@ -144,8 +146,12 @@ public class Controller {
     }
 
     private void buscarPorDistancia(int distancia){
+        System.out.println(gerMapa.getPosicao().getLatitude());
+        System.out.println(gerMapa.getPosicao().getLongitude());
+        System.out.println(util.haversine(new Geo(gerMapa.getPosicao().getLatitude(), gerMapa.getPosicao().getLongitude()), gerAero.buscarPorCodigo("POA").getLocal()));
         for(Aeroporto aero: gerAero.listarTodos()){
 
+            //System.out.println(util.haversine(new Geo(gerMapa.getPosicao().getLatitude(), gerMapa.getPosicao().getLongitude()), aero.getLocal()));
             // TODO
 
         }
