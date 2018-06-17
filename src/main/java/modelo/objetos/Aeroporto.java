@@ -1,5 +1,9 @@
 package modelo.objetos;
 
+import gui.MyWaypoint;
+
+import java.awt.*;
+
 public class Aeroporto{
 	private String codigo;
 	private String nome;
@@ -21,6 +25,12 @@ public class Aeroporto{
 	
 	public Geo getLocal() {
 		return loc;
+	}
+
+	public MyWaypoint waypoint(int trafego){
+		// TODO
+		// calculo dinamico da cor baseado no trafego
+		return new MyWaypoint(Color.RED, codigo, loc, trafego);
 	}
 
     @Override

@@ -34,7 +34,7 @@ public class GerenciadorMapa {
 	final JXMapKit jXMapKit;
 
 	private WaypointPainter<MyWaypoint> pontosPainter;
-	private GeoPosition posicaoAtual, posicaoSelecionada;
+	private GeoPosition posicao;
 	private ArrayList<Tracado> linhas;
 
 	private int maxZoomText;
@@ -133,9 +133,9 @@ public class GerenciadorMapa {
 		// Criando um objeto para desenhar os elementos de interface
 		// (ponto selecionado, etc)
 		Painter<JXMapViewer> guiPainter = (g, map, w, h) -> {
-			if (posicaoSelecionada == null)
+			if (posicao == null)
 				return;
-			Point2D point = map.convertGeoPositionToPoint(posicaoSelecionada);
+			Point2D point = map.convertGeoPositionToPoint(posicao);
 			int x = (int) point.getX();
 			int y = (int) point.getY();
 			g.setColor(Color.RED);
@@ -149,7 +149,7 @@ public class GerenciadorMapa {
 
 		jXMapKit.getMainMap().setOverlayPainter(cp);
 
-		posicaoSelecionada = null;
+		posicao = null;
 		linhas = new ArrayList<Tracado>();
 	}
 
@@ -168,7 +168,7 @@ public class GerenciadorMapa {
 	 * @param ponto central
 	 */
 	public void setPosicao(GeoPosition sel) {
-		this.posicaoSelecionada = sel;
+		this.posicao = sel;
 	}
 
 	/*
@@ -185,7 +185,7 @@ public class GerenciadorMapa {
 	 * @returns ponto selecionado
 	 */
 	public GeoPosition getPosicao() {
-		return posicaoSelecionada;
+		return posicao;
 	}
 
 	/*
@@ -199,13 +199,13 @@ public class GerenciadorMapa {
 	}
 
 	public GeoPosition getPosicaoAtual() {
-		return posicaoAtual;
+		return posicao;
 	}
 
 	public void setPosicaoAtual(GeoPosition posicaoAtual) {
 		jXMapKit.setAddressLocation(posicaoAtual);
 		jXMapKit.setAddressLocationShown(false);
-		this.posicaoAtual = posicaoAtual;
+		this.posicao = posicaoAtual;
 	}
 
 	public FonteImagens getTipoMapa() {
@@ -222,7 +222,7 @@ public class GerenciadorMapa {
 
 	public void flipTipoMapa(){
 		setTipoMapa(getTipoMapa() == FonteImagens.VirtualEarth ? FonteImagens.OpenStreetMap : FonteImagens.VirtualEarth);
-		setPosicaoAtual(posicaoAtual);
+		setPosicaoAtual(posicao);
 	}
 
 	/*

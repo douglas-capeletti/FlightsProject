@@ -2,8 +2,8 @@ package gui;
 
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
@@ -27,7 +27,6 @@ public class Controller {
     private GerenciadorMapa gerMapa;
     private Controller.EventosMouse mouse;
     private ContextMenu contextMenu = new ContextMenu();
-    private Util util = new Util();
 
     private GerenciadorAeronaves gerAvioes = new GerenciadorAeronaves();
     private GerenciadorAeroportos gerAero = new GerenciadorAeroportos();
@@ -73,20 +72,22 @@ public class Controller {
 
     private void contextMenu(){
         MenuItem todosAero = new MenuItem("Buscar Todos Aeroportos");
-        todosAero.setOnAction(event -> buscaTodosAeroportos());
+        todosAero.setOnAction(event -> pintor(buscaTodosAeroportos()));
 
         Menu pesquisarAeroporto = new Menu("Buscar Aeroporto...");
         MenuItem distancia1 = new MenuItem("5KM de distância");
-        distancia1.setOnAction(event -> buscarPorDistancia(5));
+
+        distancia1.setOnAction(event -> pintor(buscarPorDistancia(5)));
 
         MenuItem distancia2 = new MenuItem("12KM de distância");
-        distancia2.setOnAction(event -> buscarPorDistancia(12));
+        distancia2.setOnAction(event -> pintor(buscarPorDistancia(12)));
 
-        MenuItem distanciaX = new MenuItem("Qualquer distância");
-        distanciaX.setOnAction(event -> buscarPorDistancia(-1));
+        MenuItem distanciaX = new MenuItem("Mais próximo");
+        distanciaX.setOnAction(event -> pintor(buscarPorDistancia(-1)));
 
+        MenuItem fechar = new MenuItem("(Fechar Menu)");
         pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distanciaX);
-        contextMenu.getItems().addAll(todosAero, pesquisarAeroporto);
+        contextMenu.getItems().addAll(todosAero, pesquisarAeroporto, fechar);
     }
 
     private void Consulta() {
@@ -131,34 +132,34 @@ public class Controller {
         gerMapa.getMapKit().repaint();
     }
 
-    private MyWaypoint listarPontosDinamicos(Aeroporto aero){
-        return new MyWaypoint(Color.RED, aero.getCodigo(), aero.getLocal(), 7);
+    private List<Aeroporto> buscaTodosAeroportos(){
+        return new ArrayList<>(gerAero.listarTodos());
     }
 
-    private void buscaTodosAeroportos(){
-        List<MyWaypoint> pontos = new ArrayList<>();
+    private Aeroporto buscarPorDistancia(int distancia){
+        Geo posicaoAtual = new Geo(gerMapa.getPosicaoAtual().getLatitude(), gerMapa.getPosicaoAtual().getLongitude());
+        Aeroporto aeroporto = null;
+        double menorDistancia = Double.POSITIVE_INFINITY;
         for(Aeroporto aero: gerAero.listarTodos()){
-            int trafego = gerRotas.buscaTrafego(aero.getCodigo());
-            pontos.add(new MyWaypoint(Color.RED, aero.getCodigo(), aero.getLocal(), trafego));
+            if(posicaoAtual.distancia(aero.getLocal()) < menorDistancia){
+                menorDistancia = posicaoAtual.distancia(aero.getLocal());
+                aeroporto = aero;
+            }
         }
-        gerMapa.setPontos(pontos);
-        gerMapa.getMapKit().repaint();
+        return (menorDistancia < distancia || distancia == -1) && aeroporto != null ? aeroporto : null;
     }
 
-    private void buscarPorDistancia(int distancia){
-        System.out.println(gerMapa.getPosicao().getLatitude());
-        System.out.println(gerMapa.getPosicao().getLongitude());
-        System.out.println(util.haversine(new Geo(gerMapa.getPosicao().getLatitude(), gerMapa.getPosicao().getLongitude()), gerAero.buscarPorCodigo("POA").getLocal()));
-        for(Aeroporto aero: gerAero.listarTodos()){
+    private void pintor(Aeroporto aeroporto){
+        List<Aeroporto> pontos = new ArrayList<>();
+        if(aeroporto != null)
+            pontos.add(aeroporto);
+        pintor(pontos);
+    }
 
-            //System.out.println(util.haversine(new Geo(gerMapa.getPosicao().getLatitude(), gerMapa.getPosicao().getLongitude()), aero.getLocal()));
-            // TODO
-
-        }
-
-
+    private void pintor(List<Aeroporto> aeroportos){
         List<MyWaypoint> pontos = new ArrayList<>();
-        pontos.add(new MyWaypoint(Color.RED, " ", gerMapa.getPosicao(), 7));
+        for (Aeroporto aero: aeroportos)
+            pontos.add(aero.waypoint(gerRotas.buscaTrafego(aero.getCodigo())));
         gerMapa.setPontos(pontos);
         gerMapa.getMapKit().repaint();
     }
@@ -171,10 +172,9 @@ public class Controller {
             JXMapViewer mapa = gerMapa.getMapKit().getMainMap();
             GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
             lastButton = e.getButton();
+            gerMapa.setPosicao(loc);
             // Botão direito: seleciona localização
             if (lastButton == MouseEvent.BUTTON3) {
-                gerMapa.setPosicao(loc);
-                gerMapa.getMapKit().repaint();
                 mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
             }
         }
@@ -185,20 +185,19 @@ public class Controller {
     }
 
     void inicializacaoGerenciadores(){
-        mouse = new Controller.EventosMouse();
         new Setup(gerAvioes, gerAero, gerCias, gerPaises, gerRotas);
-        //Posicão inicial do Mapa, listeners do mouse e texto de FlipMap
         gerMapa = new GerenciadorMapa(gerAero.buscarPorCodigo("POA").getLocal(), GerenciadorMapa.FonteImagens.VirtualEarth);
-        gerMapa.getMapKit().getMainMap().addMouseListener(mouse);
-        gerMapa.getMapKit().getMainMap().addMouseMotionListener(mouse);
         BTNFlipMap.setText(gerMapa.getTipoMapa().toString());
     }
 
     @FXML void initialize(){
         contextMenu();
         inicializacaoGerenciadores();
+        mouse = new Controller.EventosMouse();
+        gerMapa.getMapKit().getMainMap().addMouseListener(mouse);
+        gerMapa.getMapKit().getMainMap().addMouseMotionListener(mouse);
         createSwingContent(mapkit);
-        PainelPrincipal.setCenter(mapkit); //inicializacao do mapa
+        PainelPrincipal.setCenter(mapkit);
     }
 
 }

@@ -1,6 +1,5 @@
 package modelo.gerenciadores;
 
-import modelo.objetos.Aeroporto;
 import modelo.objetos.Rota;
 
 import java.util.ArrayList;
@@ -55,4 +54,6 @@ public class GerenciadorRotas {
         }
         return trafegoTotal;
     }
+
+
 }
