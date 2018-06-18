@@ -62,15 +62,19 @@ public class Controller {
     }
 
     @FXML private void PesquisaCiaAerea(){
-        Rota rota = (Rota) CBRotaCiaAerea.getValue();
-        pintorDeTracos(rota.getOrigem(), rota.getDestino());
-        gerMapa.setPosicaoVisual(rota.getOrigem().getLocal());
+        gerMapa.clear();
+        if(CBRotaCiaAerea.getValue() != null) {
+            pintorDeTracos((Rota) CBRotaCiaAerea.getValue());
+            gerMapa.setPosicaoVisual(((Rota) CBRotaCiaAerea.getValue()).getOrigem().getLocal());
+
+        } else if (CBCiaAerea.getValue() != null){
+            pintorDeTracos(gerRotas.buscaPorCia(((CiaAerea) CBCiaAerea.getValue()).getCodigo()));
+        }
+
     }
 
     @FXML private void PesquisaAeroporto(){
-        System.out.println("Limpar");
-        gerMapa.clear();
-        gerMapa.getMapKit().repaint();
+
     }
 
     @FXML private void PesquisaRota(){
@@ -129,16 +133,26 @@ public class Controller {
         gerMapa.getMapKit().repaint();
     }
 
-    private void pintorDeTracos(Aeroporto aeroporto1, Aeroporto aeroporto2){
+    private void pintorDeTracos(Rota rota){
         List<Aeroporto> pontos = new ArrayList<>();
-        if(aeroporto1 != null)
-            pontos.add(aeroporto1);
-            pontos.add(aeroporto2);
+        if(rota != null) {
+            pontos.add(rota.getOrigem());
+            pontos.add(rota.getDestino());
+        }
         pintorDeTracos(pontos);
+    }
+    private void pintorDeTracos(ArrayList<Rota> rotas){
+        List<Aeroporto> pontos = new ArrayList<>();
+        for (Rota rota: rotas) {
+            if(rota != null) {
+                pontos.add(rota.getOrigem());
+                pontos.add(rota.getDestino());
+            }
+            pintorDeTracos(pontos);
+        }
     }
 
     private void pintorDeTracos(List<Aeroporto> aeroportos){
-        gerMapa.clear();
         Tracado tracado = new Tracado();
         for (Aeroporto aero: aeroportos){
             tracado.addPonto(aero.getLocal());
@@ -158,7 +172,7 @@ public class Controller {
             JXMapViewer mapa = gerMapa.getMapKit().getMainMap();
             GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
             lastButton = e.getButton();
-            gerMapa.setPosicaoVisual(loc);
+            gerMapa.setPosicao(loc);
             // Botão direito: seleciona localização
             if (lastButton == MouseEvent.BUTTON3) {
                 mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
@@ -180,14 +194,13 @@ public class Controller {
 
         CBCiaAerea.setItems(gerCias.listarTodos()
                 .stream()
-                .map(CiaAerea::getNome)
-                .collect(Collectors.toCollection(FXCollections::observableArrayList)));
+                .collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
 
         CBCiaAerea.valueProperty()
-                .addListener((ChangeListener<String>) (lista, anterior, atual) ->
-                        CBRotaCiaAerea.setItems(gerRotas.buscaPorCia(gerCias.buscarPorNome(atual).getCodigo())
+                .addListener((ChangeListener<CiaAerea>) (lista, anterior, atual) ->
+                        CBRotaCiaAerea.setItems(gerRotas.buscaPorCia(atual.getCodigo())
                                 .stream()
-                                .collect(Collectors.toCollection(FXCollections::observableArrayList))));
+                                .collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted()));
 
     }
 

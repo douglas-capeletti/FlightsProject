@@ -167,7 +167,7 @@ public class GerenciadorMapa {
 	 *
 	 * @param ponto central
 	 */
-	private void setPosicao(GeoPosition sel) {
+	public void setPosicao(GeoPosition sel) {
 		this.posicao = sel;
 	}
 
