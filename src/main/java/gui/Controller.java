@@ -6,6 +6,7 @@ import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
@@ -48,6 +49,7 @@ public class Controller {
 
     // Pesquisa Aeroporto;
     @FXML ComboBox CBPais;
+    @FXML Label LBLTrafego;
 
     // Pesquisa Rota
     @FXML ComboBox CBOrigem;
@@ -70,11 +72,14 @@ public class Controller {
         } else if (CBCiaAerea.getValue() != null){
             pintorDeTracos(gerRotas.buscaPorCia(((CiaAerea) CBCiaAerea.getValue()).getCodigo()));
         }
-
     }
 
     @FXML private void PesquisaAeroporto(){
-
+        if(CBPais.getValue() != null){
+            LBLTrafego.setText("Sem Dados");
+        }else {
+            pintorDePontos(buscaTodosAeroportos());
+        }
     }
 
     @FXML private void PesquisaRota(){
@@ -86,22 +91,25 @@ public class Controller {
         todosAero.setOnAction(event -> pintorDePontos(buscaTodosAeroportos()));
 
         Menu pesquisarAeroporto = new Menu("Buscar Aeroporto...");
-        MenuItem distancia1 = new MenuItem("5KM de distância");
+        MenuItem distancia1 = new MenuItem("10KM de distância");
+        distancia1.setOnAction(event -> pintorDePontos(buscarPorDistancia(10)));
 
-        distancia1.setOnAction(event -> pintorDePontos(buscarPorDistancia(5)));
+        MenuItem distancia2 = new MenuItem("50KM de distância");
+        distancia2.setOnAction(event -> pintorDePontos(buscarPorDistancia(50)));
 
-        MenuItem distancia2 = new MenuItem("12KM de distância");
-        distancia2.setOnAction(event -> pintorDePontos(buscarPorDistancia(12)));
+        MenuItem distancia3 = new MenuItem("100KM de distância");
+        distancia2.setOnAction(event -> pintorDePontos(buscarPorDistancia(100)));
 
         MenuItem distanciaX = new MenuItem("Mais próximo");
         distanciaX.setOnAction(event -> pintorDePontos(buscarPorDistancia(-1)));
 
         MenuItem fechar = new MenuItem("(Fechar Menu)");
-        pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distanciaX);
+        pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distancia3, distanciaX);
         contextMenu.getItems().addAll(todosAero, pesquisarAeroporto, fechar);
     }
 
     private List<Aeroporto> buscaTodosAeroportos(){
+        LBLTrafego.setText(gerRotas.getTrafegoTotal() + " Voos");
         return new ArrayList<>(gerAero.listarTodos());
     }
 
@@ -128,7 +136,7 @@ public class Controller {
     private void pintorDePontos(List<Aeroporto> aeroportos){
         List<MyWaypoint> pontos = new ArrayList<>();
         for (Aeroporto aero: aeroportos)
-            pontos.add(aero.waypoint(gerRotas.buscaTrafego(aero.getCodigo())));
+            pontos.add(aero.waypoint(gerRotas.getTrafego(aero.getCodigo())));
         gerMapa.setPontos(pontos);
         gerMapa.getMapKit().repaint();
     }
@@ -190,24 +198,31 @@ public class Controller {
         BTNFlipMap.setText(gerMapa.getTipoMapa().toString());
     }
 
-    private void inicializacaoComboBoxes(){
-
-        CBCiaAerea.setItems(gerCias.listarTodos()
-                .stream()
-                .collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
-
-        CBCiaAerea.valueProperty()
-                .addListener((ChangeListener<CiaAerea>) (lista, anterior, atual) ->
-                        CBRotaCiaAerea.setItems(gerRotas.buscaPorCia(atual.getCodigo())
-                                .stream()
-                                .collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted()));
-
+    private void inicializacaoPesquisaCiaAerea(){
+        CBCiaAerea.setItems(gerCias.listarTodos().stream().collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
+        CBCiaAerea.valueProperty().addListener((ChangeListener<CiaAerea>) (lista, anterior, atual) ->
+                CBRotaCiaAerea.setItems(gerRotas.buscaPorCia(atual.getCodigo()).stream().collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted()));
     }
+
+    private void inicializacaoPesquisaAeroporto(){
+        CBPais.setItems(gerPaises.listarTodos().stream().collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
+    }
+
+    private void inicializacaoPesquisaRotas(){
+        CBOrigem.setItems(gerRotas.listarTodos().stream().map(Rota::getOrigem).collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
+        CBDestino.setItems(gerRotas.listarTodos().stream().map(Rota::getDestino).collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
+        CBConexoes.setItems(FXCollections.observableArrayList(0, 1, 2, 5));
+        CBTempoVoo.setItems(FXCollections.observableArrayList(4.00, 8.00, 12.00, 24.00));
+    }
+
+
 
     @FXML void initialize(){
         contextMenu();
         inicializacaoGerenciadores();
-        inicializacaoComboBoxes();
+        inicializacaoPesquisaCiaAerea();
+        inicializacaoPesquisaAeroporto();
+        inicializacaoPesquisaRotas();
         mouse = new Controller.EventosMouse();
         gerMapa.getMapKit().getMainMap().addMouseListener(mouse);
         gerMapa.getMapKit().getMainMap().addMouseMotionListener(mouse);

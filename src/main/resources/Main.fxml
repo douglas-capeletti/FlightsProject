@@ -65,6 +65,16 @@
                               </Label>
                               <ComboBox fx:id="CBPais" layoutY="63.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="30.0" />
                               <Button layoutX="58.0" layoutY="400.0" mnemonicParsing="false" onAction="#PesquisaAeroporto" text="CONSULTAR" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" />
+                              <Label layoutX="37.0" layoutY="113.0" text="Volume de Tráfego:" textAlignment="CENTER" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="100.0">
+                                 <font>
+                                    <Font name="System Bold Italic" size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="LBLTrafego" layoutX="15.0" layoutY="135.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="140.0">
+                                 <font>
+                                    <Font name="System Bold" size="20.0" />
+                                 </font>
+                              </Label>
                            </children>
                         </AnchorPane>
                      </content>
@@ -91,7 +101,7 @@
                                  </font>
                               </Label>
                               <ComboBox fx:id="CBConexoes" layoutX="15.0" layoutY="202.0" prefWidth="150.0" promptText="&lt;- Selecione -&gt;" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="170.0" />
-                              <Label layoutX="25.0" layoutY="192.0" text="Tempo de Voo Máximo" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="215.0">
+                              <Label layoutX="25.0" layoutY="192.0" text="Horas de Voo Máximo" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="215.0">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

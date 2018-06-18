@@ -55,12 +55,17 @@ public class GerenciadorRotas {
         return result;
     }
 
-    public int buscaTrafego(String codAeroporto){
-        int trafegoTotal = 0;
+    public int getTrafego(String codAeroporto){
+        int trafego = 0;
         for(Rota r: rotas.values()){
-            if(r.getOrigem().getCodigo().equals(codAeroporto)) trafegoTotal++;
-            if(r.getDestino().getCodigo().equals(codAeroporto)) trafegoTotal++;
+            if(r.getOrigem().getCodigo().equals(codAeroporto)) trafego++;
+            if(r.getDestino().getCodigo().equals(codAeroporto)) trafego++;
         }
-        return trafegoTotal;
+        return trafego;
     }
+
+    public int getTrafegoTotal(){
+        return rotas.size() * 2;
+    }
+
 }

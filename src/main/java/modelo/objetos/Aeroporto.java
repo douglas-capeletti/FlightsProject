@@ -35,6 +35,6 @@ public class Aeroporto{
 
     @Override
     public String toString() {
-        return codigo + " - " + nome + " [" + loc + "]\n";
+        return nome;
     }
 }
