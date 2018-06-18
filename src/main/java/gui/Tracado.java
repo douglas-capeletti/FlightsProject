@@ -14,7 +14,7 @@ public class Tracado {
 	
 	public Tracado() {
 		pontos = new ArrayList<>();
-		this.cor = Color.BLACK;
+		this.cor = new Color(0,0,0,60);
 		this.width = 1;
 		this.label = "";
 	}

@@ -46,6 +46,15 @@ public class GerenciadorRotas {
         return result;
     }
 
+    public ArrayList<Rota> buscaPorCia(String codCia){
+        ArrayList<Rota> result = new ArrayList<>();
+        for(Rota rota: rotas.values()){
+            if(rota.getCia().getCodigo().equalsIgnoreCase(codCia))
+                result.add(rota);
+        }
+        return result;
+    }
+
     public int buscaTrafego(String codAeroporto){
         int trafegoTotal = 0;
         for(Rota r: rotas.values()){
@@ -54,6 +63,4 @@ public class GerenciadorRotas {
         }
         return trafegoTotal;
     }
-
-
 }

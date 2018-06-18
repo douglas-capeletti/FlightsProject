@@ -31,7 +31,6 @@ public class Rota {
 
     @Override
     public String toString() {
-        return cia.getCodigo() + " - " + origem.getCodigo() + " -> " + destino.getCodigo()
-                + " ("  + aeronave.getCodigo() + ")\n";
+        return origem.getNome() + " -> " + destino.getNome();
     }
 }

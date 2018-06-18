@@ -57,7 +57,7 @@ public class GerenciadorMapa {
 		jXMapKit.setZoom(10);
 
 		// Define local inicial do mapa
-		setPosicaoAtual(centro);
+		setPosicaoVisual(centro);
 
 		// Opcoes extras sobre posicao e fonte
 		wxmin = jXMapKit.getMainMap().getTileFactory().getInfo().getLongitudeDegreeWidthInPixels(17);
@@ -167,7 +167,7 @@ public class GerenciadorMapa {
 	 *
 	 * @param ponto central
 	 */
-	public void setPosicao(GeoPosition sel) {
+	private void setPosicao(GeoPosition sel) {
 		this.posicao = sel;
 	}
 
@@ -198,11 +198,7 @@ public class GerenciadorMapa {
 		pontosPainter.setWaypoints(new HashSet<MyWaypoint>(lista));
 	}
 
-	public GeoPosition getPosicaoAtual() {
-		return posicao;
-	}
-
-	public void setPosicaoAtual(GeoPosition posicaoAtual) {
+	public void setPosicaoVisual(GeoPosition posicaoAtual) {
 		jXMapKit.setAddressLocation(posicaoAtual);
 		jXMapKit.setAddressLocationShown(false);
 		this.posicao = posicaoAtual;
@@ -222,7 +218,7 @@ public class GerenciadorMapa {
 
 	public void flipTipoMapa(){
 		setTipoMapa(getTipoMapa() == FonteImagens.VirtualEarth ? FonteImagens.OpenStreetMap : FonteImagens.VirtualEarth);
-		setPosicaoAtual(posicao);
+		setPosicaoVisual(posicao);
 	}
 
 	/*

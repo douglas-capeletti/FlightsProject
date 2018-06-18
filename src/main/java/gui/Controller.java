@@ -1,5 +1,7 @@
 package gui;
 
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingNode;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,7 +12,9 @@ import javafx.scene.layout.BorderPane;
 import modelo.Setup;
 import modelo.gerenciadores.*;
 import modelo.objetos.Aeroporto;
+import modelo.objetos.CiaAerea;
 import modelo.objetos.Geo;
+import modelo.objetos.Rota;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -20,6 +24,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Controller {
 
@@ -57,7 +62,9 @@ public class Controller {
     }
 
     @FXML private void PesquisaCiaAerea(){
-        Consulta();
+        Rota rota = (Rota) CBRotaCiaAerea.getValue();
+        pintorDeTracos(rota.getOrigem(), rota.getDestino());
+        gerMapa.setPosicaoVisual(rota.getOrigem().getLocal());
     }
 
     @FXML private void PesquisaAeroporto(){
@@ -72,64 +79,22 @@ public class Controller {
 
     private void contextMenu(){
         MenuItem todosAero = new MenuItem("Buscar Todos Aeroportos");
-        todosAero.setOnAction(event -> pintor(buscaTodosAeroportos()));
+        todosAero.setOnAction(event -> pintorDePontos(buscaTodosAeroportos()));
 
         Menu pesquisarAeroporto = new Menu("Buscar Aeroporto...");
         MenuItem distancia1 = new MenuItem("5KM de distância");
 
-        distancia1.setOnAction(event -> pintor(buscarPorDistancia(5)));
+        distancia1.setOnAction(event -> pintorDePontos(buscarPorDistancia(5)));
 
         MenuItem distancia2 = new MenuItem("12KM de distância");
-        distancia2.setOnAction(event -> pintor(buscarPorDistancia(12)));
+        distancia2.setOnAction(event -> pintorDePontos(buscarPorDistancia(12)));
 
         MenuItem distanciaX = new MenuItem("Mais próximo");
-        distanciaX.setOnAction(event -> pintor(buscarPorDistancia(-1)));
+        distanciaX.setOnAction(event -> pintorDePontos(buscarPorDistancia(-1)));
 
         MenuItem fechar = new MenuItem("(Fechar Menu)");
         pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distanciaX);
         contextMenu.getItems().addAll(todosAero, pesquisarAeroporto, fechar);
-    }
-
-    private void Consulta() {
-
-        // Lista para armazenar o resultado da consulta
-        List<MyWaypoint> lstPoints = new ArrayList<>();
-
-        Aeroporto poa = gerAero.buscarPorCodigo("POA");
-        Aeroporto gru = gerAero.buscarPorCodigo("GRU");
-        Aeroporto lis = gerAero.buscarPorCodigo("LIS");
-        Aeroporto mia = gerAero.buscarPorCodigo("MIA");
-
-        gerMapa.clear();
-        Tracado tr = new Tracado();
-        tr.setLabel("Teste");
-        tr.setWidth(5);
-        tr.setCor(new Color(0,0,0,60));
-        tr.addPonto(poa.getLocal());
-        tr.addPonto(mia.getLocal());
-        tr.addPonto(gru.getLocal());
-        tr.addPonto(lis.getLocal());
-
-        gerMapa.addTracado(tr);
-
-        // Adiciona os locais de cada aeroporto (sem repetir) na lista de
-        // waypoints
-
-        lstPoints.add(new MyWaypoint(Color.RED, poa.getCodigo(), poa.getLocal(), 5));
-        lstPoints.add(new MyWaypoint(Color.RED, gru.getCodigo(), gru.getLocal(), 5));
-        lstPoints.add(new MyWaypoint(Color.RED, lis.getCodigo(), lis.getLocal(), 5));
-        lstPoints.add(new MyWaypoint(Color.RED, mia.getCodigo(), mia.getLocal(), 5));
-
-        // Para obter um ponto clicado no mapa, usar como segue:
-        // GeoPosition pos = gerMapa.getPosicao();
-
-        // Informa o resultado para o gerMapa
-        gerMapa.setPontos(lstPoints);
-
-        // Quando for o caso de limpar os traçados...
-        // gerMapa.clear();
-
-        gerMapa.getMapKit().repaint();
     }
 
     private List<Aeroporto> buscaTodosAeroportos(){
@@ -137,7 +102,7 @@ public class Controller {
     }
 
     private Aeroporto buscarPorDistancia(int distancia){
-        Geo posicaoAtual = new Geo(gerMapa.getPosicaoAtual().getLatitude(), gerMapa.getPosicaoAtual().getLongitude());
+        Geo posicaoAtual = new Geo(gerMapa.getPosicao().getLatitude(), gerMapa.getPosicao().getLongitude());
         Aeroporto aeroporto = null;
         double menorDistancia = Double.POSITIVE_INFINITY;
         for(Aeroporto aero: gerAero.listarTodos()){
@@ -149,20 +114,41 @@ public class Controller {
         return (menorDistancia < distancia || distancia == -1) && aeroporto != null ? aeroporto : null;
     }
 
-    private void pintor(Aeroporto aeroporto){
+    private void pintorDePontos(Aeroporto aeroporto){
         List<Aeroporto> pontos = new ArrayList<>();
         if(aeroporto != null)
             pontos.add(aeroporto);
-        pintor(pontos);
+        pintorDePontos(pontos);
     }
 
-    private void pintor(List<Aeroporto> aeroportos){
+    private void pintorDePontos(List<Aeroporto> aeroportos){
         List<MyWaypoint> pontos = new ArrayList<>();
         for (Aeroporto aero: aeroportos)
             pontos.add(aero.waypoint(gerRotas.buscaTrafego(aero.getCodigo())));
         gerMapa.setPontos(pontos);
         gerMapa.getMapKit().repaint();
     }
+
+    private void pintorDeTracos(Aeroporto aeroporto1, Aeroporto aeroporto2){
+        List<Aeroporto> pontos = new ArrayList<>();
+        if(aeroporto1 != null)
+            pontos.add(aeroporto1);
+            pontos.add(aeroporto2);
+        pintorDeTracos(pontos);
+    }
+
+    private void pintorDeTracos(List<Aeroporto> aeroportos){
+        gerMapa.clear();
+        Tracado tracado = new Tracado();
+        for (Aeroporto aero: aeroportos){
+            tracado.addPonto(aero.getLocal());
+        }
+        tracado.setWidth(5);
+        tracado.setCor(new Color(60, 40, 40, 200));
+        gerMapa.addTracado(tracado);
+        pintorDePontos(aeroportos);
+    }
+
 
     private class EventosMouse extends MouseAdapter {
         private int lastButton = -1;
@@ -172,7 +158,7 @@ public class Controller {
             JXMapViewer mapa = gerMapa.getMapKit().getMainMap();
             GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
             lastButton = e.getButton();
-            gerMapa.setPosicao(loc);
+            gerMapa.setPosicaoVisual(loc);
             // Botão direito: seleciona localização
             if (lastButton == MouseEvent.BUTTON3) {
                 mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
@@ -184,15 +170,31 @@ public class Controller {
         SwingUtilities.invokeLater(() -> swingNode.setContent(gerMapa.getMapKit()));
     }
 
-    void inicializacaoGerenciadores(){
+    private void inicializacaoGerenciadores(){
         new Setup(gerAvioes, gerAero, gerCias, gerPaises, gerRotas);
         gerMapa = new GerenciadorMapa(gerAero.buscarPorCodigo("POA").getLocal(), GerenciadorMapa.FonteImagens.VirtualEarth);
         BTNFlipMap.setText(gerMapa.getTipoMapa().toString());
     }
 
+    private void inicializacaoComboBoxes(){
+
+        CBCiaAerea.setItems(gerCias.listarTodos()
+                .stream()
+                .map(CiaAerea::getNome)
+                .collect(Collectors.toCollection(FXCollections::observableArrayList)));
+
+        CBCiaAerea.valueProperty()
+                .addListener((ChangeListener<String>) (lista, anterior, atual) ->
+                        CBRotaCiaAerea.setItems(gerRotas.buscaPorCia(gerCias.buscarPorNome(atual).getCodigo())
+                                .stream()
+                                .collect(Collectors.toCollection(FXCollections::observableArrayList))));
+
+    }
+
     @FXML void initialize(){
         contextMenu();
         inicializacaoGerenciadores();
+        inicializacaoComboBoxes();
         mouse = new Controller.EventosMouse();
         gerMapa.getMapKit().getMainMap().addMouseListener(mouse);
         gerMapa.getMapKit().getMainMap().addMouseMotionListener(mouse);
