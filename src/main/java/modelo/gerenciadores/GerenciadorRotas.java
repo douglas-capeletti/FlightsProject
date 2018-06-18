@@ -68,4 +68,8 @@ public class GerenciadorRotas {
         return rotas.size() * 2;
     }
 
+    public void getPesquisaRota(){
+
+    }
+
 }

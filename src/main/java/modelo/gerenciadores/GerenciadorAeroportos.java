@@ -22,6 +22,12 @@ public class GerenciadorAeroportos {
         return new ArrayList<>(aeroportos.values());
     }
 
+    public ArrayList<Aeroporto> listarTodosOutros(Aeroporto aeroporto){
+        Map<String, Aeroporto> aeros = new HashMap<>(aeroportos);
+        aeros.remove(aeroporto.getCodigo());
+        return new ArrayList<>(aeros.values());
+    }
+
     public Aeroporto buscarPorCodigo(String codigo) {
         return aeroportos.get(codigo);
     }

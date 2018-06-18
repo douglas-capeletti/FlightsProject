@@ -48,19 +48,31 @@ public class Setup {
 	}
 
 	private void carregaAeronaves(){
-		carregaDados(Arquivos.AERONAVES).forEach(linha -> avioes.adicionar(new Aeronave(linha[0], linha[1], Integer.parseInt(linha[2]))));
+		carregaDados(Arquivos.AERONAVES).forEach(linha -> {
+		    if(avioes.buscarPorCodigo(linha[0]) == null)
+                avioes.adicionar(new Aeronave(linha[0], linha[1], Integer.parseInt(linha[2])));
+        });
 	}
 
 	private void carregaAeroportos(){
-		carregaDados(Arquivos.AEROPORTOS).forEach(linha -> aeroportos.adicionar(new Aeroporto(linha[0], linha[3], new Geo(Double.parseDouble(linha[1]), Double.parseDouble(linha[2])))));
+		carregaDados(Arquivos.AEROPORTOS).forEach(linha -> {
+		    if(aeroportos.buscarPorCodigo(linha[0]) == null)
+                aeroportos.adicionar(new Aeroporto(linha[0], linha[3], new Geo(Double.parseDouble(linha[1]), Double.parseDouble(linha[2]))));
+        });
 	}
 
 	private void carregaCias(){
-		carregaDados(Arquivos.CIA_AEREA).forEach(linha -> empresas.adicionar(new CiaAerea(linha[0], linha[1])));
+		carregaDados(Arquivos.CIA_AEREA).forEach(linha -> {
+		    if(empresas.buscarPorCod(linha[0]) == null)
+                empresas.adicionar(new CiaAerea(linha[0], linha[1]));
+        });
 	}
 
 	private void carregaPaises(){
-		carregaDados(Arquivos.PAISES).forEach(linha -> paises.adicionar(new Pais(linha[0], linha[1])));
+	    carregaDados(Arquivos.PAISES).forEach(linha -> {
+	        if(paises.buscarPorCod(linha[0]) == null)
+                paises.adicionar(new Pais(linha[0], linha[1]));
+        });
 	}
 
 	private void carregaRotas(){

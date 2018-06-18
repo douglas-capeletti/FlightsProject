@@ -101,11 +101,14 @@ public class Controller {
         distancia2.setOnAction(event -> pintorDePontos(buscarPorDistancia(100)));
 
         MenuItem distanciaX = new MenuItem("Mais próximo");
-        distanciaX.setOnAction(event -> pintorDePontos(buscarPorDistancia(-1)));
+        distanciaX.setOnAction(event -> pintorDePontos(buscarPorDistancia(Integer.MAX_VALUE)));
+
+        MenuItem limpar = new MenuItem("(Limpar)");
+        limpar.setOnAction(event -> pintorDePontos(buscarPorDistancia(-1)));
 
         MenuItem fechar = new MenuItem("(Fechar Menu)");
         pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distancia3, distanciaX);
-        contextMenu.getItems().addAll(todosAero, pesquisarAeroporto, fechar);
+        contextMenu.getItems().addAll(todosAero, pesquisarAeroporto, limpar, fechar);
     }
 
     private List<Aeroporto> buscaTodosAeroportos(){
@@ -114,6 +117,7 @@ public class Controller {
     }
 
     private Aeroporto buscarPorDistancia(int distancia){
+        gerMapa.clear();
         Geo posicaoAtual = new Geo(gerMapa.getPosicao().getLatitude(), gerMapa.getPosicao().getLongitude());
         Aeroporto aeroporto = null;
         double menorDistancia = Double.POSITIVE_INFINITY;
@@ -123,22 +127,7 @@ public class Controller {
                 aeroporto = aero;
             }
         }
-        return (menorDistancia < distancia || distancia == -1) && aeroporto != null ? aeroporto : null;
-    }
-
-    private void pintorDePontos(Aeroporto aeroporto){
-        List<Aeroporto> pontos = new ArrayList<>();
-        if(aeroporto != null)
-            pontos.add(aeroporto);
-        pintorDePontos(pontos);
-    }
-
-    private void pintorDePontos(List<Aeroporto> aeroportos){
-        List<MyWaypoint> pontos = new ArrayList<>();
-        for (Aeroporto aero: aeroportos)
-            pontos.add(aero.waypoint(gerRotas.getTrafego(aero.getCodigo())));
-        gerMapa.setPontos(pontos);
-        gerMapa.getMapKit().repaint();
+        return (menorDistancia < distancia) && aeroporto != null ? aeroporto : null;
     }
 
     private void pintorDeTracos(Rota rota){
@@ -149,6 +138,7 @@ public class Controller {
         }
         pintorDeTracos(pontos);
     }
+
     private void pintorDeTracos(ArrayList<Rota> rotas){
         List<Aeroporto> pontos = new ArrayList<>();
         for (Rota rota: rotas) {
@@ -159,7 +149,6 @@ public class Controller {
             pintorDeTracos(pontos);
         }
     }
-
     private void pintorDeTracos(List<Aeroporto> aeroportos){
         Tracado tracado = new Tracado();
         for (Aeroporto aero: aeroportos){
@@ -169,6 +158,23 @@ public class Controller {
         tracado.setCor(new Color(60, 40, 40, 200));
         gerMapa.addTracado(tracado);
         pintorDePontos(aeroportos);
+    }
+
+    private void pintorDePontos(Aeroporto aeroporto){
+        List<Aeroporto> pontos = new ArrayList<>();
+        if(aeroporto != null) {
+            gerMapa.setPosicaoVisual(aeroporto.getLocal());
+            pontos.add(aeroporto);
+        }
+        pintorDePontos(pontos);
+    }
+
+    private void pintorDePontos(List<Aeroporto> aeroportos){
+        List<MyWaypoint> pontos = new ArrayList<>();
+        for (Aeroporto aero: aeroportos)
+            pontos.add(aero.waypoint(gerRotas.getTrafego(aero.getCodigo())));
+        gerMapa.setPontos(pontos);
+        gerMapa.getMapKit().repaint();
     }
 
 
@@ -209,8 +215,9 @@ public class Controller {
     }
 
     private void inicializacaoPesquisaRotas(){
-        CBOrigem.setItems(gerRotas.listarTodos().stream().map(Rota::getOrigem).collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
-        CBDestino.setItems(gerRotas.listarTodos().stream().map(Rota::getDestino).collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
+        CBOrigem.setItems(gerAero.listarTodos().stream().collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted());
+        CBOrigem.valueProperty().addListener((ChangeListener<Aeroporto>) (lista, anterior, atual) ->
+                CBDestino.setItems(gerAero.listarTodosOutros(atual).stream().collect(Collectors.toCollection(FXCollections::observableArrayList)).sorted()));
         CBConexoes.setItems(FXCollections.observableArrayList(0, 1, 2, 5));
         CBTempoVoo.setItems(FXCollections.observableArrayList(4.00, 8.00, 12.00, 24.00));
     }
