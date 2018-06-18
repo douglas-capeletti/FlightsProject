@@ -1,5 +1,6 @@
 package modelo;
 
+import gui.Util;
 import modelo.gerenciadores.*;
 import modelo.objetos.*;
 
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Setup {
+	private Util util = new Util();
 	private GerenciadorAeronaves avioes;
 	private GerenciadorAeroportos aeroportos;
 	private GerenciadorCias empresas;
@@ -42,7 +44,7 @@ public class Setup {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			util.showWarning(Util.Warning.ERRO_DADOS_INICIALIZACAO);
 		}
 		return linhas;
 	}

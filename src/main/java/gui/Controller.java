@@ -33,6 +33,7 @@ public class Controller {
     private GerenciadorMapa gerMapa;
     private Controller.EventosMouse mouse;
     private ContextMenu contextMenu = new ContextMenu();
+    private Util util = new Util();
 
     private GerenciadorAeronaves gerAvioes = new GerenciadorAeronaves();
     private GerenciadorAeroportos gerAero = new GerenciadorAeroportos();
@@ -83,7 +84,8 @@ public class Controller {
     }
 
     @FXML private void PesquisaRota(){
-
+        Aeroporto origem = (Aeroporto) CBOrigem.getValue();
+        Aeroporto destino = (Aeroporto) CBDestino.getValue();
     }
 
     private void contextMenu(){
