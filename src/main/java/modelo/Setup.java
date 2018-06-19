@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Setup {
-	private Util util = new Util();
+    private Util util = new Util();
 	private GerenciadorAeronaves avioes;
 	private GerenciadorAeroportos aeroportos;
 	private GerenciadorCias empresas;
@@ -20,11 +20,13 @@ public class Setup {
 	private GerenciadorPaises paises;
 
 	public Setup(GerenciadorAeronaves avioes, GerenciadorAeroportos aeroportos, GerenciadorCias empresas, GerenciadorPaises paises, GerenciadorRotas rotas) {
+		this.paises = paises;
 		this.avioes = avioes;
 		this.aeroportos = aeroportos;
 		this.empresas = empresas;
 		this.paises = paises;
 		this.rotas = rotas;
+		carregaPaises();
 		carregaAeronaves();
 		carregaAeroportos();
 		carregaCias();
@@ -59,7 +61,7 @@ public class Setup {
 	private void carregaAeroportos(){
 		carregaDados(Arquivos.AEROPORTOS).forEach(linha -> {
 		    if(aeroportos.buscarPorCodigo(linha[0]) == null)
-                aeroportos.adicionar(new Aeroporto(linha[0], linha[3], new Geo(Double.parseDouble(linha[1]), Double.parseDouble(linha[2]))));
+                aeroportos.adicionar(new Aeroporto(linha[0], linha[3], new Geo(Double.parseDouble(linha[1]), Double.parseDouble(linha[2])), paises.buscarPorCod(linha[4])));
         });
 	}
 

@@ -12,10 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import modelo.Setup;
 import modelo.gerenciadores.*;
-import modelo.objetos.Aeroporto;
-import modelo.objetos.CiaAerea;
-import modelo.objetos.Geo;
-import modelo.objetos.Rota;
+import modelo.objetos.*;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -33,7 +30,6 @@ public class Controller {
     private GerenciadorMapa gerMapa;
     private Controller.EventosMouse mouse;
     private ContextMenu contextMenu = new ContextMenu();
-    private Util util = new Util();
 
     private GerenciadorAeronaves gerAvioes = new GerenciadorAeronaves();
     private GerenciadorAeroportos gerAero = new GerenciadorAeroportos();
@@ -77,7 +73,12 @@ public class Controller {
 
     @FXML private void PesquisaAeroporto(){
         if(CBPais.getValue() != null){
-            LBLTrafego.setText("Sem Dados");
+            List<Aeroporto> aeroportos = gerAero.buscarPorPais((Pais) CBPais.getValue());
+            pintorDePontos(aeroportos);
+            LBLTrafego.setText(gerRotas.getTrafego(aeroportos) + " Voos");
+            if(aeroportos.size() > 0) {
+                gerMapa.setPosicaoVisual(aeroportos.get(0).getLocal());
+            }
         }else {
             pintorDePontos(buscaTodosAeroportos());
         }
@@ -151,6 +152,7 @@ public class Controller {
             pintorDeTracos(pontos);
         }
     }
+
     private void pintorDeTracos(List<Aeroporto> aeroportos){
         Tracado tracado = new Tracado();
         for (Aeroporto aero: aeroportos){
