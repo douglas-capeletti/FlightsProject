@@ -1,9 +1,11 @@
 package modelo.gerenciadores;
 
 import modelo.objetos.Aeroporto;
+import modelo.objetos.Pais;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GerenciadorAeroportos {
@@ -24,6 +26,15 @@ public class GerenciadorAeroportos {
 
     public Aeroporto buscarPorCodigo(String codigo) {
         return aeroportos.get(codigo);
+    }
+
+    public List<Aeroporto> buscarPorPais(Pais pais){
+        List<Aeroporto> aeros = new ArrayList<>();
+        for(Aeroporto aero: aeroportos.values()){
+            if(aero.getPais().getCodigo().equals(pais.getCodigo()))
+                aeros.add(aero);
+        }
+        return aeros;
     }
 
 }

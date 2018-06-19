@@ -18,15 +18,15 @@ public class Setup {
 	private GerenciadorPaises paises;
 
 	public Setup(GerenciadorAeronaves avioes, GerenciadorAeroportos aeroportos, GerenciadorCias empresas, GerenciadorPaises paises, GerenciadorRotas rotas) {
+		this.paises = paises;
 		this.avioes = avioes;
 		this.aeroportos = aeroportos;
 		this.empresas = empresas;
-		this.paises = paises;
 		this.rotas = rotas;
+		carregaPaises();
 		carregaAeronaves();
 		carregaAeroportos();
 		carregaCias();
-		carregaPaises();
 		carregaRotas();
 	}
 
@@ -47,20 +47,20 @@ public class Setup {
 		return linhas;
 	}
 
+	private void carregaPaises(){
+		carregaDados(Arquivos.PAISES).forEach(linha -> paises.adicionar(new Pais(linha[0], linha[1])));
+	}
+
 	private void carregaAeronaves(){
 		carregaDados(Arquivos.AERONAVES).forEach(linha -> avioes.adicionar(new Aeronave(linha[0], linha[1], Integer.parseInt(linha[2]))));
 	}
 
 	private void carregaAeroportos(){
-		carregaDados(Arquivos.AEROPORTOS).forEach(linha -> aeroportos.adicionar(new Aeroporto(linha[0], linha[3], new Geo(Double.parseDouble(linha[1]), Double.parseDouble(linha[2])))));
+		carregaDados(Arquivos.AEROPORTOS).forEach(linha -> aeroportos.adicionar(new Aeroporto(linha[0], linha[3], new Geo(Double.parseDouble(linha[1]), Double.parseDouble(linha[2])), paises.buscarPorCod(linha[4]))));
 	}
 
 	private void carregaCias(){
 		carregaDados(Arquivos.CIA_AEREA).forEach(linha -> empresas.adicionar(new CiaAerea(linha[0], linha[1])));
-	}
-
-	private void carregaPaises(){
-		carregaDados(Arquivos.PAISES).forEach(linha -> paises.adicionar(new Pais(linha[0], linha[1])));
 	}
 
 	private void carregaRotas(){

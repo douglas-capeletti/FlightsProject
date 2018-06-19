@@ -12,10 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.BorderPane;
 import modelo.Setup;
 import modelo.gerenciadores.*;
-import modelo.objetos.Aeroporto;
-import modelo.objetos.CiaAerea;
-import modelo.objetos.Geo;
-import modelo.objetos.Rota;
+import modelo.objetos.*;
 import org.jxmapviewer.JXMapViewer;
 import org.jxmapviewer.viewer.GeoPosition;
 
@@ -76,7 +73,12 @@ public class Controller {
 
     @FXML private void PesquisaAeroporto(){
         if(CBPais.getValue() != null){
-            LBLTrafego.setText("Sem Dados");
+            List<Aeroporto> aeroportos = gerAero.buscarPorPais((Pais) CBPais.getValue());
+            pintorDePontos(aeroportos);
+            LBLTrafego.setText(gerRotas.getTrafego(aeroportos) + " Voos");
+            if(aeroportos.size() > 0) {
+                gerMapa.setPosicaoVisual(aeroportos.get(0).getLocal());
+            }
         }else {
             pintorDePontos(buscaTodosAeroportos());
         }
@@ -136,7 +138,7 @@ public class Controller {
     private void pintorDePontos(List<Aeroporto> aeroportos){
         List<MyWaypoint> pontos = new ArrayList<>();
         for (Aeroporto aero: aeroportos)
-            pontos.add(aero.waypoint(gerRotas.getTrafego(aero.getCodigo())));
+            pontos.add(aero.waypoint(gerRotas.getTrafego(aero)));
         gerMapa.setPontos(pontos);
         gerMapa.getMapKit().repaint();
     }

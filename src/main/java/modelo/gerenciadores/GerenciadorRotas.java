@@ -1,9 +1,11 @@
 package modelo.gerenciadores;
 
+import modelo.objetos.Aeroporto;
 import modelo.objetos.Rota;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GerenciadorRotas {
@@ -55,17 +57,27 @@ public class GerenciadorRotas {
         return result;
     }
 
-    public int getTrafego(String codAeroporto){
+    public int getTrafego(Aeroporto aeroporto){
+        List<Aeroporto> aeroportos = new ArrayList<>();
+        aeroportos.add(aeroporto);
+        return getTrafego(aeroportos);
+    }
+
+    public int getTrafego(List<Aeroporto> aeroportos){
         int trafego = 0;
-        for(Rota r: rotas.values()){
-            if(r.getOrigem().getCodigo().equals(codAeroporto)) trafego++;
-            if(r.getDestino().getCodigo().equals(codAeroporto)) trafego++;
+        for(Aeroporto aero: aeroportos){
+            for(Rota r: rotas.values()){
+                if(r.getOrigem().getCodigo().equals(aero.getCodigo())) trafego++;
+                if(r.getDestino().getCodigo().equals(aero.getCodigo())) trafego++;
+            }
         }
         return trafego;
     }
 
+
     public int getTrafegoTotal(){
-        return rotas.size() * 2;
+        return rotas.size();
     }
+
 
 }
