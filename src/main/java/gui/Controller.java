@@ -73,12 +73,7 @@ public class Controller {
 
     @FXML private void PesquisaAeroporto(){
         if(CBPais.getValue() != null){
-            List<Aeroporto> aeroportos = gerAero.buscarPorPais((Pais) CBPais.getValue());
-            pintorDePontos(aeroportos);
-            LBLTrafego.setText(gerRotas.getTrafego(aeroportos) + " Voos");
-            if(aeroportos.size() > 0) {
-                gerMapa.setPosicaoVisual(aeroportos.get(0).getLocal());
-            }
+            LBLTrafego.setText(pintorDePontos((Pais) CBPais.getValue()) + " Voos");
         }else {
             pintorDePontos(buscaTodosAeroportos());
         }
@@ -93,6 +88,13 @@ public class Controller {
         MenuItem todosAero = new MenuItem("Buscar Todos Aeroportos");
         todosAero.setOnAction(event -> pintorDePontos(buscaTodosAeroportos()));
 
+        MenuItem AerosPais = new MenuItem("Aeroportos pais mais próximo");
+        AerosPais.setOnAction(event -> {
+            Aeroporto aeroporto = buscarPorDistancia(Integer.MAX_VALUE);
+            if(aeroporto != null)
+                pintorDePontos(aeroporto.getPais());
+        });
+
         Menu pesquisarAeroporto = new Menu("Buscar Aeroporto...");
         MenuItem distancia1 = new MenuItem("10KM de distância");
         distancia1.setOnAction(event -> pintorDePontos(buscarPorDistancia(10)));
@@ -106,16 +108,17 @@ public class Controller {
         MenuItem distanciaX = new MenuItem("Mais próximo");
         distanciaX.setOnAction(event -> pintorDePontos(buscarPorDistancia(Integer.MAX_VALUE)));
 
+
         MenuItem limpar = new MenuItem("(Limpar)");
         limpar.setOnAction(event -> pintorDePontos(buscarPorDistancia(-1)));
 
         MenuItem fechar = new MenuItem("(Fechar Menu)");
         pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distancia3, distanciaX);
-        contextMenu.getItems().addAll(todosAero, pesquisarAeroporto, limpar, fechar);
+
+        contextMenu.getItems().addAll(todosAero, AerosPais, pesquisarAeroporto, limpar, fechar);
     }
 
     private List<Aeroporto> buscaTodosAeroportos(){
-        LBLTrafego.setText(gerRotas.getTrafegoTotal() + " Voos");
         return new ArrayList<>(gerAero.listarTodos());
     }
 
@@ -164,21 +167,30 @@ public class Controller {
         pintorDePontos(aeroportos);
     }
 
-    private void pintorDePontos(Aeroporto aeroporto){
+    private int pintorDePontos(Pais pais){
+        return pintorDePontos(gerAero.buscarPorPais(pais));
+    }
+
+    private int pintorDePontos(Aeroporto aeroporto){
         List<Aeroporto> pontos = new ArrayList<>();
         if(aeroporto != null) {
             gerMapa.setPosicaoVisual(aeroporto.getLocal());
             pontos.add(aeroporto);
         }
         pintorDePontos(pontos);
+        return pontos.size();
     }
 
-    private void pintorDePontos(List<Aeroporto> aeroportos){
+    private int pintorDePontos(List<Aeroporto> aeroportos){
         List<MyWaypoint> pontos = new ArrayList<>();
         for (Aeroporto aero: aeroportos)
-            pontos.add(aero.waypoint(gerRotas.getTrafego(aero.getCodigo())));
+            pontos.add(aero.waypoint(gerRotas.getTrafego(aero)));
         gerMapa.setPontos(pontos);
         gerMapa.getMapKit().repaint();
+        if(aeroportos.size() > 0)
+            gerMapa.setPosicaoVisual(pontos.get(0).getPosition());
+
+        return pontos.size();
     }
 
 

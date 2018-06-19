@@ -51,6 +51,13 @@ public class Setup {
 		return linhas;
 	}
 
+	private void carregaPaises(){
+		carregaDados(Arquivos.PAISES).forEach(linha -> {
+			if(paises.buscarPorCod(linha[0]) == null)
+				paises.adicionar(new Pais(linha[0], linha[1]));
+		});
+	}
+
 	private void carregaAeronaves(){
 		carregaDados(Arquivos.AERONAVES).forEach(linha -> {
 		    if(avioes.buscarPorCodigo(linha[0]) == null)
@@ -69,13 +76,6 @@ public class Setup {
 		carregaDados(Arquivos.CIA_AEREA).forEach(linha -> {
 		    if(empresas.buscarPorCod(linha[0]) == null)
                 empresas.adicionar(new CiaAerea(linha[0], linha[1]));
-        });
-	}
-
-	private void carregaPaises(){
-	    carregaDados(Arquivos.PAISES).forEach(linha -> {
-	        if(paises.buscarPorCod(linha[0]) == null)
-                paises.adicionar(new Pais(linha[0], linha[1]));
         });
 	}
 
