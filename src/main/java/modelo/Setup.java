@@ -4,48 +4,40 @@ import gui.Util;
 import modelo.gerenciadores.*;
 import modelo.objetos.*;
 
-import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Setup {
     private Util util = new Util();
+	private GerenciadorPaises paises;
 	private GerenciadorAeronaves avioes;
 	private GerenciadorAeroportos aeroportos;
 	private GerenciadorCias empresas;
 	private GerenciadorRotas rotas;
-	private GerenciadorPaises paises;
 
 	public Setup(GerenciadorAeronaves avioes, GerenciadorAeroportos aeroportos, GerenciadorCias empresas, GerenciadorPaises paises, GerenciadorRotas rotas) {
 		this.paises = paises;
 		this.avioes = avioes;
 		this.aeroportos = aeroportos;
 		this.empresas = empresas;
-		this.paises = paises;
 		this.rotas = rotas;
 		carregaPaises();
 		carregaAeronaves();
 		carregaAeroportos();
 		carregaCias();
-		carregaPaises();
 		carregaRotas();
 	}
 
 	private List<String[]> carregaDados(Arquivos origem) throws NullPointerException{
 		List<String[]> linhas = null;
-		try {
-			try (Stream<String> stream = Files.lines(Paths.get(origem.getCaminho()))) {
-				try {
-					linhas = stream.map((linha) -> linha.split(";")).collect(Collectors.toList());
-					linhas.remove(0);//tira a primeira linha com o cabecalho
-				} finally {
-					stream.close();
-				}
-			}
-		} catch (IOException e) {
+		ClassLoader loader = getClass().getClassLoader();
+		try (Stream<String> stream = Files.lines(new File(loader.getResource(origem.getCaminho()).getFile()).toPath())) {
+				linhas = stream.map((linha) -> linha.split(";")).collect(Collectors.toList());
+				linhas.remove(0);//tira a primeira linha com o cabecalho
+		} catch (Exception e) {
 			util.showWarning(Util.Warning.ERRO_DADOS_INICIALIZACAO);
 		}
 		return linhas;
@@ -93,7 +85,7 @@ public class Setup {
 		private String caminho;
 
 		public String getCaminho(){
-			return System.getProperty("user.dir") + "/dados/" + caminho;
+			return "dados/" + caminho;
 		}
 
 		Arquivos(String caminho) {

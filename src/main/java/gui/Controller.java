@@ -30,6 +30,7 @@ public class Controller {
     private GerenciadorMapa gerMapa;
     private Controller.EventosMouse mouse;
     private ContextMenu contextMenu = new ContextMenu();
+    private Util util = new Util();
 
     private GerenciadorAeronaves gerAvioes = new GerenciadorAeronaves();
     private GerenciadorAeroportos gerAero = new GerenciadorAeroportos();
@@ -61,22 +62,20 @@ public class Controller {
     }
 
     @FXML private void PesquisaCiaAerea(){
-        gerMapa.clear();
-        if(CBRotaCiaAerea.getValue() != null) {
+        if(CBRotaCiaAerea.getValue() != null) { // selecionou uma rota especifica
             pintorDeTracos((Rota) CBRotaCiaAerea.getValue());
             gerMapa.setPosicaoVisual(((Rota) CBRotaCiaAerea.getValue()).getOrigem().getLocal());
 
-        } else if (CBCiaAerea.getValue() != null){
+        } else if (CBCiaAerea.getValue() != null){ //selecionou somente a Cia aerea
             pintorDeTracos(gerRotas.buscaPorCia(((CiaAerea) CBCiaAerea.getValue()).getCodigo()));
+
+        } else { // nao selecionou nada
+            util.showWarning(Util.Warning.ERRO_PESQUISAR_CIA_AEREA);
         }
     }
 
     @FXML private void PesquisaAeroporto(){
-        if(CBPais.getValue() != null){
-            LBLTrafego.setText(pintorDePontos((Pais) CBPais.getValue()) + " Voos");
-        }else {
-            pintorDePontos(buscaTodosAeroportos());
-        }
+        LBLTrafego.setText((CBPais.getValue() == null ? pintorDePontos(gerAero.listarTodos()) : pintorDePontos((Pais) CBPais.getValue())) + " Voos" );
     }
 
     @FXML private void PesquisaRota(){
@@ -86,7 +85,7 @@ public class Controller {
 
     private void contextMenu(){
         MenuItem todosAero = new MenuItem("Buscar Todos Aeroportos");
-        todosAero.setOnAction(event -> pintorDePontos(buscaTodosAeroportos()));
+        todosAero.setOnAction(event -> pintorDePontos(gerAero.listarTodos()));
 
         MenuItem AerosPais = new MenuItem("Aeroportos pais mais próximo");
         AerosPais.setOnAction(event -> {
@@ -116,10 +115,6 @@ public class Controller {
         pesquisarAeroporto.getItems().addAll(distancia1, distancia2, distancia3, distanciaX);
 
         contextMenu.getItems().addAll(todosAero, AerosPais, pesquisarAeroporto, limpar, fechar);
-    }
-
-    private List<Aeroporto> buscaTodosAeroportos(){
-        return new ArrayList<>(gerAero.listarTodos());
     }
 
     private Aeroporto buscarPorDistancia(int distancia){
@@ -193,7 +188,6 @@ public class Controller {
         return pontos.size();
     }
 
-
     private class EventosMouse extends MouseAdapter {
         private int lastButton = -1;
 
@@ -208,10 +202,6 @@ public class Controller {
                 mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
             }
         }
-    }
-
-    private void createSwingContent(final SwingNode swingNode) {
-        SwingUtilities.invokeLater(() -> swingNode.setContent(gerMapa.getMapKit()));
     }
 
     private void inicializacaoGerenciadores(){
@@ -238,7 +228,13 @@ public class Controller {
         CBTempoVoo.setItems(FXCollections.observableArrayList(4.00, 8.00, 12.00, 24.00));
     }
 
-
+    private void inicializacaoMapa(){
+        mouse = new Controller.EventosMouse();
+        gerMapa.getMapKit().getMainMap().addMouseListener(mouse);
+        gerMapa.getMapKit().getMainMap().addMouseMotionListener(mouse);
+        SwingUtilities.invokeLater(() -> mapkit.setContent(gerMapa.getMapKit()));
+        PainelPrincipal.setCenter(mapkit);
+    }
 
     @FXML void initialize(){
         contextMenu();
@@ -246,11 +242,7 @@ public class Controller {
         inicializacaoPesquisaCiaAerea();
         inicializacaoPesquisaAeroporto();
         inicializacaoPesquisaRotas();
-        mouse = new Controller.EventosMouse();
-        gerMapa.getMapKit().getMainMap().addMouseListener(mouse);
-        gerMapa.getMapKit().getMainMap().addMouseMotionListener(mouse);
-        createSwingContent(mapkit);
-        PainelPrincipal.setCenter(mapkit);
+        inicializacaoMapa();
     }
 
 }
