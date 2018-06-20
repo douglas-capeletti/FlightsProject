@@ -35,7 +35,7 @@ public class GerenciadorRotas {
     public ArrayList<Rota> listaDestinos(String codOrigem){
         ArrayList<Rota> destinos = new ArrayList<>();
         for(Rota r: rotas.values()) {
-            if(r.getAeronave().getCodigo().equals(codOrigem)){
+            if(r.getOrigem().getCodigo().equals(codOrigem)){
                 destinos.add(r);
             }
         }
@@ -74,10 +74,8 @@ public class GerenciadorRotas {
         return trafego;
     }
 
-
     public int getTrafegoTotal(){
         return rotas.size();
     }
-
 
 }

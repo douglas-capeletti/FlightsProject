@@ -34,8 +34,7 @@ public class Aeroporto{
 	}
 
 	public MyWaypoint waypoint(int trafego){
-		// TODO
-		// calculo dinamico da cor baseado no trafego
+		// TODO - Calculo dinamico da cor baseado no trafego
 		return new MyWaypoint(Color.BLUE, codigo, loc, trafego);
 	}
 

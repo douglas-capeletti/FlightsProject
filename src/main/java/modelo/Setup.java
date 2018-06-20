@@ -4,8 +4,8 @@ import gui.Util;
 import modelo.gerenciadores.*;
 import modelo.objetos.*;
 
-import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,8 +33,7 @@ public class Setup {
 
 	private List<String[]> carregaDados(Arquivos origem) throws NullPointerException{
 		List<String[]> linhas = null;
-		ClassLoader loader = getClass().getClassLoader();
-		try (Stream<String> stream = Files.lines(new File(loader.getResource(origem.getCaminho()).getFile()).toPath())) {
+		try (Stream<String> stream = Files.lines(Paths.get(origem.getCaminho()))) {
 				linhas = stream.map((linha) -> linha.split(";")).collect(Collectors.toList());
 				linhas.remove(0);//tira a primeira linha com o cabecalho
 		} catch (Exception e) {
@@ -85,7 +84,7 @@ public class Setup {
 		private String caminho;
 
 		public String getCaminho(){
-			return "dados/" + caminho;
+			return System.getProperty("user.dir") + "/dados/" + caminho;
 		}
 
 		Arquivos(String caminho) {

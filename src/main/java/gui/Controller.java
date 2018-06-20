@@ -81,6 +81,18 @@ public class Controller {
     @FXML private void PesquisaRota(){
         Aeroporto origem = (Aeroporto) CBOrigem.getValue();
         Aeroporto destino = (Aeroporto) CBDestino.getValue();
+
+        if(CBOrigem.getValue() == null) {
+            util.showWarning(Util.Warning.ERRO_PESQUISAR_ORIGEM_ROTA);
+
+        } else if (CBDestino.getValue() == null) {
+            pintorDeTracos(buscaDestinos(origem));
+
+        }else {
+            ArrayList<Aeroporto> escalas = new ArrayList<>();
+            //buscaRotaEscalonada(escalas, origem, destino, 10);
+            pintorDeTracos(escalas);
+        }
     }
 
     private void contextMenu(){
@@ -116,6 +128,25 @@ public class Controller {
 
         contextMenu.getItems().addAll(todosAero, AerosPais, pesquisarAeroporto, limpar, fechar);
     }
+
+    private ArrayList<Rota> buscaDestinos(Aeroporto origem){
+        return gerRotas.listaDestinos(origem.getCodigo());
+    }
+
+//    private void buscaRotaEscalonada(ArrayList<Aeroporto> escalas, Aeroporto origem, Aeroporto destino, int numEscalas){
+//        ArrayList<Aeroporto> destinos = gerRotas.listaDestinos(origem.getCodigo());
+//        if(escalas.size() < numEscalas && destinos != null){
+//            for(Aeroporto aero: destinos){
+//                if(aero.getCodigo().equals(destino.getCodigo())) {
+//                    escalas.add(aero);
+//                    return;
+//                } else {
+//                    buscaRotaEscalonada(gerRotas.listaDestinos(aero.getCodigo()), origem, destino, numEscalas++);
+//                }
+//
+//            }
+//        }
+//    }
 
     private Aeroporto buscarPorDistancia(int distancia){
         gerMapa.clear();
@@ -182,26 +213,12 @@ public class Controller {
             pontos.add(aero.waypoint(gerRotas.getTrafego(aero)));
         gerMapa.setPontos(pontos);
         gerMapa.getMapKit().repaint();
-        if(aeroportos.size() > 0)
+        if(aeroportos.size() > 0) {
             gerMapa.setPosicaoVisual(pontos.get(0).getPosition());
-
-        return pontos.size();
-    }
-
-    private class EventosMouse extends MouseAdapter {
-        private int lastButton = -1;
-
-        @Override
-        public void mousePressed(MouseEvent e) {
-            JXMapViewer mapa = gerMapa.getMapKit().getMainMap();
-            GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
-            lastButton = e.getButton();
-            gerMapa.setPosicao(loc);
-            // Botão direito: seleciona localização
-            if (lastButton == MouseEvent.BUTTON3) {
-                mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
-            }
+        } else {
+            util.showWarning(Util.Warning.AEROPORTO_SEM_ROTAS);
         }
+        return pontos.size();
     }
 
     private void inicializacaoGerenciadores(){
@@ -234,6 +251,22 @@ public class Controller {
         gerMapa.getMapKit().getMainMap().addMouseMotionListener(mouse);
         SwingUtilities.invokeLater(() -> mapkit.setContent(gerMapa.getMapKit()));
         PainelPrincipal.setCenter(mapkit);
+    }
+
+    private class EventosMouse extends MouseAdapter {
+        private int lastButton = -1;
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            JXMapViewer mapa = gerMapa.getMapKit().getMainMap();
+            GeoPosition loc = mapa.convertPointToGeoPosition(e.getPoint());
+            lastButton = e.getButton();
+            gerMapa.setPosicao(loc);
+            // Botão direito: seleciona localização
+            if (lastButton == MouseEvent.BUTTON3) {
+                mapkit.setOnContextMenuRequested(event -> contextMenu.show(mapkit, event.getScreenX(), event.getScreenY()));
+            }
+        }
     }
 
     @FXML void initialize(){
